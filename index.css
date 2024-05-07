@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Malgun+Gothic&display=swap');
+
+:root {
+	--margin: 3px;
+	--background: white;
+	--dark: black;
+	--light: #cccccc;
+	--gradient: linear-gradient(90deg, #cccccc, white);
+}
+
+html {
+	scroll-behavior: smooth;
+	cursor: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+body {
+	margin: 0px;
+	background: var(--background);
+	display: flex;
+	justify-content: center;
+}
