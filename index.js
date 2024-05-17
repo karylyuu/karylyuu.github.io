@@ -18,3 +18,17 @@ function seperateAnimation(query, animation) {
 		}
 	}
 }
+
+let intersectionObserver = new IntersectionObserver((entries, observer) => {
+	for(let [i, entry] of entries.entries()) {
+		if(entry.target.tagName == 'SECTION') {
+			let button = document.querySelector(`#menu-button-${entry.target.id}`)
+			if(entry.isIntersecting) button.classList.add('highlighted')
+			else button.classList.remove('highlighted')
+			if(entry.target.id == 'about' && !entry.isIntersecting) document.querySelector('#character').dataset.sleep = document.querySelector('#character').dataset.sleep == 'false'
+		} else if(entry.isIntersecting) {
+			setTimeout(() => entry.target.classList.remove('hide') , (i + 1) * 100)
+			observer.unobserve(entry.target)
+		}
+	}
+}, {threshold: 0.1} )
