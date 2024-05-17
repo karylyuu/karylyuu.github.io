@@ -32,3 +32,17 @@ let intersectionObserver = new IntersectionObserver((entries, observer) => {
 		}
 	}
 }, {threshold: 0.1} )
+
+function addMenuButton(id, subtitle) {
+	let menuButton = document.createElement('div')
+	menuButton.id = `menu-button-${id.toLowerCase()}`
+	menuButton.classList.add('menu-button')
+	menuButton.style.animationDelay = `${(document.getElementsByClassName('menu-button').length + 3) / 10}s`
+	menuButton.textContent = id
+	menuButton.onclick = () => {
+		document.querySelector(`#${id.toLowerCase()}`).scrollIntoView()
+		document.querySelector('#menu-toggle').classList.toggle('toggled')
+	}
+	menuButton.dataset.subtitle = `${subtitle}/`
+	document.querySelector('nav').append(menuButton)
+}
