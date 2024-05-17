@@ -46,3 +46,25 @@ function addMenuButton(id, subtitle) {
 	menuButton.dataset.subtitle = `${subtitle}/`
 	document.querySelector('nav').append(menuButton)
 }
+
+function loadContents(list, sectionId, subtitle, createElement, hideButton) {
+	let section = document.querySelector(`#${sectionId.toLowerCase()}`)
+	if(!hideButton) {
+		let header = document.createElement('h2')
+		header.textContent = sectionId
+		header.classList.add('hide')
+		section.append(header)
+		intersectionObserver.observe(header)
+		intersectionObserver.observe(section)
+		addMenuButton(sectionId, subtitle)
+	}
+	let container = document.createElement('div')
+	container.classList.add('container')
+	section.append(container)
+	for(let item of list) {
+		let element = createElement(item)
+		element.classList.add('hide')
+		intersectionObserver.observe(element)
+		container.append(element)
+	}
+}
