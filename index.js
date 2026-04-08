@@ -134,7 +134,6 @@ seperateAnimation('#creations > h2', (element, i) => { element.style.transitionD
 seperateAnimation('#illustrations > h2', (element, i) => { element.style.transitionDelay = `${i * 0.05}s` })
 
 let mouseEffect = new MouseEffect('mouse-effect', 'a, .menu-button, #menu-toggle')
-mouseEffect.mouseX = -1000
 
 function draw(time) {
 	requestAnimationFrame(draw)
