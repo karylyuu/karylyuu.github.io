@@ -167,3 +167,5 @@ function draw(time) {
 		sprite.update(time)
 	}
 }
+
+requestAnimationFrame(draw)
