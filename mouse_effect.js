@@ -36,7 +36,7 @@ class MouseEffect {
 	constructor(id, hoverTarget) {
 		this.canvas = document.createElement('canvas')
 		this.canvas.setAttribute('id', id)
-		this.canvas.setAttribute('style', `position: fixed; top: 0px; width: 100lvw; height: 100lvh; mix-blend-mode: difference; pointer-events: none; z-index: 2;`)
+		this.canvas.setAttribute('style', `position: fixed; top: 0px; width: 100lvw; height: 100lvh; pointer-events: none; z-index: 2;`)
 		document.body.append(this.canvas)
 		this.c = this.canvas.getContext('2d')
 		this.canvas.width = this.canvas.clientWidth * devicePixelRatio
