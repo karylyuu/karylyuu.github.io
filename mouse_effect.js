@@ -71,8 +71,8 @@ class MouseEffect {
 	}
 
 	update(time) {
-		this.c.fillStyle = "black"
-		this.c.strokeStyle = "black"
+		this.c.fillStyle = `rgb(255, 255, 255)`
+		this.c.strokeStyle = `rgb(255, 255, 255)`
 		if((this.mouseX != this.pmouseX || this.mouseY != this.pmouseY) && this.hover < 0.2) this.particleColddown += time - this.lastTime
 		while(this.particleColddown > 50) {
 			this.particleColddown -= 50
@@ -82,7 +82,7 @@ class MouseEffect {
 			this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
 			this.hover = Math.min(Math.max(this.hover + (((this.onHoverTarget)? 1 : 0 - this.hover)) * (time - this.lastTime) * 0.01, 0), 1)
 		} else this.updated = true
-		if(this.hover > 0.01 && !this.isTouchDevice)  {
+		if(!this.isTouchDevice)  {
 			this.c.beginPath()
 			this.c.arc(this.mouseX, this.mouseY, this.hover * 18, 0, 6.28318)
 			this.c.stroke()
