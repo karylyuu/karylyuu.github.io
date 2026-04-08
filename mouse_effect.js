@@ -71,8 +71,8 @@ class MouseEffect {
 	}
 
 	update(time) {
-		this.c.fillStyle = `rgb(255, 255, 255)`
-		this.c.strokeStyle = `rgb(255, 255, 255)`
+		this.c.fillStyle = "black"
+		this.c.strokeStyle = "black"
 		if((this.mouseX != this.pmouseX || this.mouseY != this.pmouseY) && this.hover < 0.2) this.particleColddown += time - this.lastTime
 		while(this.particleColddown > 50) {
 			this.particleColddown -= 50
