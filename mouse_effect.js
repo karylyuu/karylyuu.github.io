@@ -84,7 +84,7 @@ class MouseEffect {
 		} else this.updated = true
 		if(!this.isTouchDevice)  {
 			this.c.beginPath()
-			this.c.arc(this.mouseX, this.mouseY, this.hover * 18, 0, 6.28318)
+			this.c.arc(this.mouseX, this.mouseY, 8 + this.hover * 10, 0, 6.28318)
 			this.c.stroke()
 		}
 		for(let p of this.particles) { p.update(this.c, time - this.lastTime) }
