@@ -25,7 +25,12 @@ let intersectionObserver = new IntersectionObserver((entries, observer) => {
 			let button = document.querySelector(`#menu-button-${entry.target.id}`)
 			if(entry.isIntersecting) button.classList.add('highlighted')
 			else button.classList.remove('highlighted')
-			if(entry.target.id == 'about' && !entry.isIntersecting) document.querySelector('#character').dataset.sleep = document.querySelector('#character').dataset.sleep == 'false'
+			if(entry.target.id == 'about' && !entry.isIntersecting) {
+				const character = document.querySelector('#character')
+				if (character) {
+					character.dataset.sleep = character.dataset.sleep == 'false'
+				}
+			}
 		} else if(entry.isIntersecting) {
 			setTimeout(() => entry.target.classList.remove('hide') , (i + 1) * 100)
 			observer.unobserve(entry.target)
@@ -123,11 +128,6 @@ function loadMedia(item) {
 loadContents(creations, 'Creations', '창작', loadMedia)
 loadContents(illustrations, 'Illustrations', '일러스트', loadMedia)
 
-document.querySelector('nav > img').onclick = () => {
-	document.querySelector(`#about`).scrollIntoView()
-	document.querySelector('#menu-toggle').classList.toggle('toggled')
-}
-
 seperateAnimation('#works > h2', (element, i) => { element.style.transitionDelay = `${i * 0.05}s` })
 seperateAnimation('#projects > h2', (element, i) => { element.style.transitionDelay = `${i * 0.05}s` })
 seperateAnimation('#creations > h2', (element, i) => { element.style.transitionDelay = `${i * 0.05}s` })
@@ -138,26 +138,31 @@ mouseEffect.mouseX = -1000
 
 function draw(time) {
 	requestAnimationFrame(draw)
-    
-    if(document.querySelector('#character').dataset.sleep == 'true') sprite.play('sleep')
-    else {
-        let box = sprite.element.getBoundingClientRect()
-        let dir = Math.atan2(mouseEffect.mouseY - (box.top + box.bottom) / 2, mouseEffect.mouseX - (box.left + box.right) / 2)
-        let dist = Math.sqrt(Math.pow(mouseEffect.mouseY -  (box.top + box.bottom) / 2, 2) + Math.pow(mouseEffect.mouseX - (box.left + box.right) / 2, 2))
-        
-        if(dist < 100) {
-            sprite.play('center')
-        } else if(dir < Math.PI * 0.25 && dir >= -Math.PI * 0.25) {
-            sprite.play('right')
-        } else if(dir < Math.PI * 0.75 && dir >= Math.PI * 0.25) {
-            sprite.play('down')
-        } else if(dir < -Math.PI * 0.75 || dir >= Math.PI * 0.25) {
-            sprite.play('left')
-        } else {
-            sprite.play('up')
-        }
-    }
-	
-    sprite.update(time)
-	if(!mouseEffect.updated) mouseEffect.update(time)
+
+	const character = document.querySelector('#character')
+
+	if (character && character.dataset.sleep == 'true') {
+		sprite.play('sleep')
+	} else if (character) {
+		let box = sprite.element.getBoundingClientRect()
+		let dir = Math.atan2(
+			mouseEffect.mouseY - (box.top + box.bottom) / 2,
+			mouseEffect.mouseX - (box.left + box.right) / 2
+		)
+		let dist = Math.sqrt(
+			Math.pow(mouseEffect.mouseY - (box.top + box.bottom) / 2, 2) +
+			Math.pow(mouseEffect.mouseX - (box.left + box.right) / 2, 2)
+		)
+
+		if(dist < 100) sprite.play('center')
+		else if(dir < Math.PI * 0.25 && dir >= -Math.PI * 0.25) sprite.play('right')
+		else if(dir < Math.PI * 0.75 && dir >= Math.PI * 0.25) sprite.play('down')
+		else if(dir < -Math.PI * 0.75 || dir >= Math.PI * 0.25) sprite.play('left')
+		else sprite.play('up')
+	}
+
+	mouseEffect.update(time)
+	if (typeof sprite !== 'undefined' && sprite.element) {
+		sprite.update(time)
+	}
 }
