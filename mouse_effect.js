@@ -97,66 +97,72 @@ class MouseEffect {
 		window.addEventListener('scroll', () => (this.onHoverTarget = false))
 	}
 
+
 	update(time) {
-		// 색상
-		this.c.fillStyle = "black"
-		this.c.strokeStyle = "black"
 
-		// ✨ 글로우 효과
-		this.c.shadowBlur = 20
-		this.c.shadowColor = "rgba(0,0,0,0.3)"
+	// ❗ 완전 삭제 → ❌
+	// this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
-		// 화면 초기화
-		this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
+	// ✅ 반투명으로 덮어서 잔상 남기기 (핵심)
+	this.c.fillStyle = "rgba(255,255,255,0.08)"
+	this.c.fillRect(0, 0, this.canvas.width, this.canvas.height)
 
-		// 파티클 생성
-		if (
-			(this.mouseX != this.pmouseX || this.mouseY != this.pmouseY) &&
-			this.hover < 0.2
-		)
-			this.particleColddown += time - this.lastTime
+	// 색상
+	this.c.fillStyle = "black"
+	this.c.strokeStyle = "black"
 
-		while (this.particleColddown > 40) {
-			this.particleColddown -= 40
-			this.particles.push(new Particle(this.mouseX, this.mouseY, 2))
-		}
+	// 글로우
+	this.c.shadowBlur = 15
+	this.c.shadowColor = "rgba(0,0,0,0.2)"
 
-		// hover 계산
-		this.hover = Math.min(
-			Math.max(
-				this.hover +
-					(((this.onHoverTarget ? 1 : 0) - this.hover) *
-						(time - this.lastTime) *
-						0.01),
-				0
-			),
-			1
-		)
+	// hover 계산 (기존 유지)
+	this.hover = Math.min(
+		Math.max(
+			this.hover +
+				(((this.onHoverTarget ? 1 : 0) - this.hover) *
+					(time - this.lastTime) *
+					0.01),
+			0
+		),
+		1
+	)
 
-		// 🟢 커서 (핵심)
-		if (!this.isTouchDevice) {
-			this.c.beginPath()
+	// 🟢 커서 (유지)
+	if (!this.isTouchDevice) {
+		this.c.beginPath()
+		this.c.arc(this.mouseX, this.mouseY, 8 + this.hover * 10, 0, 6.28318)
 
-			// 항상 보이는 기본 크기 + hover 확대
-			this.c.arc(this.mouseX, this.mouseY, 8 + this.hover * 10, 0, 6.28318)
-
-			// 내부 채우기
-			this.c.fillStyle = "rgba(0,0,0,0.15)"
-			this.c.fill()
-
-			// 테두리
-			this.c.stroke()
-		}
-
-		// 파티클 업데이트
-		for (let p of this.particles) {
-			p.update(this.c, time - this.lastTime)
-		}
-
-		this.particles = this.particles.filter(item => item.time > 0)
-
-		this.pmouseX = this.mouseX
-		this.pmouseY = this.mouseY
-		this.lastTime = time
+		this.c.fillStyle = "rgba(0,0,0,0.15)"
+		this.c.fill()
+		this.c.stroke()
 	}
+
+	// ✨ 트레일 (추가 핵심)
+	let dx = this.mouseX - this.pmouseX
+	let dy = this.mouseY - this.pmouseY
+	let dist = Math.sqrt(dx * dx + dy * dy)
+
+	for (let i = 0; i < dist; i += 3) {
+		let x = this.pmouseX + (dx * i) / dist
+		let y = this.pmouseY + (dy * i) / dist
+
+		this.c.beginPath()
+		this.c.arc(x, y, 2, 0, 6.283)
+		this.c.fill()
+	}
+
+	// ✨ 파티클 강화
+	if (dist > 5) {
+		this.particles.push(new Particle(this.mouseX, this.mouseY, 2))
+	}
+
+	for (let p of this.particles) {
+		p.update(this.c, time - this.lastTime)
+	}
+
+	this.particles = this.particles.filter(p => p.time > 0)
+
+	this.pmouseX = this.mouseX
+	this.pmouseY = this.mouseY
+	this.lastTime = time
 }
