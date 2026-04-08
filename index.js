@@ -139,30 +139,31 @@ mouseEffect.mouseX = -1000
 function draw(time) {
 	requestAnimationFrame(draw)
 
-	const character = document.querySelector('#character')
-
-	if (character && character.dataset.sleep == 'true') {
-		sprite.play('sleep')
-	} else if (character) {
-		let box = sprite.element.getBoundingClientRect()
-		let dir = Math.atan2(
-			mouseEffect.mouseY - (box.top + box.bottom) / 2,
-			mouseEffect.mouseX - (box.left + box.right) / 2
-		)
-		let dist = Math.sqrt(
-			Math.pow(mouseEffect.mouseY - (box.top + box.bottom) / 2, 2) +
-			Math.pow(mouseEffect.mouseX - (box.left + box.right) / 2, 2)
-		)
-
-		if(dist < 100) sprite.play('center')
-		else if(dir < Math.PI * 0.25 && dir >= -Math.PI * 0.25) sprite.play('right')
-		else if(dir < Math.PI * 0.75 && dir >= Math.PI * 0.25) sprite.play('down')
-		else if(dir < -Math.PI * 0.75 || dir >= Math.PI * 0.25) sprite.play('left')
-		else sprite.play('up')
-	}
-
 	mouseEffect.update(time)
+
 	if (typeof sprite !== 'undefined' && sprite.element) {
+		const character = document.querySelector('#character')
+
+		if (character && character.dataset.sleep == 'true') {
+			sprite.play('sleep')
+		} else if (character) {
+			let box = sprite.element.getBoundingClientRect()
+			let dir = Math.atan2(
+				mouseEffect.mouseY - (box.top + box.bottom) / 2,
+				mouseEffect.mouseX - (box.left + box.right) / 2
+			)
+			let dist = Math.sqrt(
+				Math.pow(mouseEffect.mouseY - (box.top + box.bottom) / 2, 2) +
+				Math.pow(mouseEffect.mouseX - (box.left + box.right) / 2, 2)
+			)
+
+			if(dist < 100) sprite.play('center')
+			else if(dir < Math.PI * 0.25 && dir >= -Math.PI * 0.25) sprite.play('right')
+			else if(dir < Math.PI * 0.75 && dir >= Math.PI * 0.25) sprite.play('down')
+			else if(dir < -Math.PI * 0.75 || dir >= Math.PI * 0.25) sprite.play('left')
+			else sprite.play('up')
+		}
+
 		sprite.update(time)
 	}
 }
