@@ -486,3 +486,32 @@ h2.hide > * {
 		font-size: 12px;
 	}
 }
+
+.quick-info {
+	max-width: 520px;
+	margin-top: 12px;
+	line-height: 1.7;
+	font-size: 14.5px;
+	color: #222;
+	padding-left: 10px;
+	border-left: 2px solid #111;
+}
+
+.quick-info p {
+	margin-bottom: 10px;
+}
+
+.qi-title {
+	font-weight: 600;
+	margin-bottom: 12px;
+	letter-spacing: 1px;
+}
+
+.qi-section {
+	margin-top: 22px;
+	margin-bottom: 6px;
+	font-weight: 500;
+	font-size: 13px;
+	letter-spacing: 1px;
+	color: #666;
+}
