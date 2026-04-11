@@ -103,100 +103,94 @@ class MouseEffect {
 		window.addEventListener('scroll', () => (this.onHoverTarget = false))
 	}
 
-	update(time) {
-		this.c.fillStyle = "black"
-		this.c.strokeStyle = "black"
+update(time) {
+	this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
-		this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
+	this.c.fillStyle = "black"
+	this.c.strokeStyle = "black"
 
-		// 파티클 생성 조건
-		if (
-			(this.mouseX != this.pmouseX || this.mouseY != this.pmouseY) &&
-			this.hover < 0.2
-		) {
-			this.particleColddown += time - this.lastTime
-		}
+	// 🔥 속도 계산
+	let dx = this.mouseX - this.pmouseX
+	let dy = this.mouseY - this.pmouseY
+	let dist = Math.sqrt(dx * dx + dy * dy)
+	let speed = Math.min(dist / 10, 2)
 
-		while (this.particleColddown > 50) {
-			this.particleColddown -= 50
-			this.particles.push(new Particle(this.mouseX, this.mouseY, 2))
-		}
+	// ---------------------------
+	// 1️⃣ 잔상 레이어 (핵심 추가)
+	// ---------------------------
+	if (!this.trails) this.trails = []
 
-		// hover 계산
-		this.hover = Math.min(
-			Math.max(
-				this.hover +
-					(((this.onHoverTarget ? 1 : 0) - this.hover) *
-						(time - this.lastTime) *
-						0.01),
-				0
-			),
-			1
-		)
+	this.trails.push({
+		x: this.mouseX,
+		y: this.mouseY,
+		life: 1
+	})
 
-		// 🟢 커서 원
-		if (!this.isTouchDevice) {
-			this.c.beginPath()
-			this.c.arc(this.mouseX, this.mouseY, 8 + this.hover * 10, 0, 6.28318)
-			this.c.stroke()
-		}
+	for (let t of this.trails) {
+		this.c.beginPath()
+		this.c.arc(t.x, t.y, 6 * t.life, 0, 6.283)
+		this.c.fillStyle = `rgba(0,0,0,${t.life * 0.15})`
+		this.c.fill()
 
-		// ✨ 트레일 (추가된 핵심)
-		let dx = this.mouseX - this.pmouseX
-		let dy = this.mouseY - this.pmouseY
-		let dist = Math.sqrt(dx * dx + dy * dy)
-
-		if (dist > 1) {
-			let speed = Math.min(dist / 10, 2)
-
-			this.c.globalAlpha = 0.3 + speed * 0.3
-			this.c.lineWidth = 1 + speed * 2
-
-			this.c.beginPath()
-			this.c.moveTo(this.pmouseX, this.pmouseY)
-
-			let segments = 6
-			for (let i = 1; i <= segments; i++) {
-				let t = i / segments
-				let x = this.pmouseX + (this.mouseX - this.pmouseX) * t
-				let y = this.pmouseY + (this.mouseY - this.pmouseY) * t
-
-				let offset = (Math.random() - 0.5) * 10 * speed
-				x += offset
-				y += offset
-
-				this.c.lineTo(x, y)
-			}
-			
-			this.c.stroke()
-
-			if (Math.random() < 0.3) {
-				this.c.beginPath()
-				this.c.moveTo(this.mouseX, this.mouseY)
-
-				let branchLength = 10 + Math.random() * 20
-				let angle = Math.random() * Math.PI * 2
-
-				this.c.lineTo(
-					this.mouseX + Math.cos(angle) * branchLength,
-					this.mouseY + Math.sin(angle) * branchLength
-				)
-
-				this.c.stroke()
-			}
-
-			this.c.globalAlpha = 1
-		}
-		
-		// 파티클 업데이트
-		for (let p of this.particles) {
-			p.update(this.c, time - this.lastTime)
-		}
-
-		this.particles = this.particles.filter(p => p.time > -1)
-
-		this.pmouseX = this.mouseX
-		this.pmouseY = this.mouseY
-		this.lastTime = time
+		t.life -= 0.04
 	}
+
+	this.trails = this.trails.filter(t => t.life > 0)
+
+	// ---------------------------
+	// 2️⃣ 부드러운 트레일 라인
+	// ---------------------------
+	if (dist > 0.5) {
+		this.c.beginPath()
+
+		let mx = (this.mouseX + this.pmouseX) / 2
+		let my = (this.mouseY + this.pmouseY) / 2
+
+		this.c.moveTo(this.pmouseX, this.pmouseY)
+		this.c.quadraticCurveTo(this.pmouseX, this.pmouseY, mx, my)
+
+		this.c.lineWidth = 1.5 + speed
+		this.c.globalAlpha = 0.2 + speed * 0.2
+
+		this.c.stroke()
+		this.c.globalAlpha = 1
+	}
+
+	// ---------------------------
+	// 3️⃣ 파티클 (약하게 유지)
+	// ---------------------------
+	if (dist > 2 && Math.random() < 0.2) {
+		this.particles.push(new Particle(this.mouseX, this.mouseY, 2))
+	}
+
+	for (let p of this.particles) {
+		p.update(this.c, time - this.lastTime)
+	}
+	this.particles = this.particles.filter(p => p.time > -1)
+
+	// ---------------------------
+	// 4️⃣ 커서 링
+	// ---------------------------
+	this.hover = Math.min(
+		Math.max(
+			this.hover +
+				(((this.onHoverTarget ? 1 : 0) - this.hover) *
+					(time - this.lastTime) *
+					0.01),
+			0
+		),
+		1
+	)
+
+	if (!this.isTouchDevice) {
+		this.c.beginPath()
+		this.c.arc(this.mouseX, this.mouseY, 8 + this.hover * 12, 0, 6.283)
+		this.c.lineWidth = 2
+		this.c.stroke()
+	}
+
+	// ---------------------------
+	this.pmouseX = this.mouseX
+	this.pmouseY = this.mouseY
+	this.lastTime = time
 }
