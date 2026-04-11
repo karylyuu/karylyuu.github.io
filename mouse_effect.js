@@ -109,6 +109,7 @@ class MouseEffect {
 
 		this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
+		// 파티클 생성 조건
 		if (
 			(this.mouseX != this.pmouseX || this.mouseY != this.pmouseY) &&
 			this.hover < 0.2
@@ -121,6 +122,7 @@ class MouseEffect {
 			this.particles.push(new Particle(this.mouseX, this.mouseY, 2))
 		}
 
+		// hover 계산
 		this.hover = Math.min(
 			Math.max(
 				this.hover +
@@ -132,12 +134,31 @@ class MouseEffect {
 			1
 		)
 
+		// 🟢 커서 원
 		if (!this.isTouchDevice) {
 			this.c.beginPath()
 			this.c.arc(this.mouseX, this.mouseY, 8 + this.hover * 10, 0, 6.28318)
 			this.c.stroke()
 		}
 
+		// ✨ 트레일 (추가된 핵심)
+		let dx = this.mouseX - this.pmouseX
+		let dy = this.mouseY - this.pmouseY
+		let dist = Math.sqrt(dx * dx + dy * dy)
+
+		if (dist > 1) {
+			this.c.globalAlpha = 0.4
+			this.c.lineWidth = 2
+
+			this.c.beginPath()
+			this.c.moveTo(this.pmouseX, this.pmouseY)
+			this.c.lineTo(this.mouseX, this.mouseY)
+			this.c.stroke()
+
+			this.c.globalAlpha = 1
+		}
+
+		// 파티클 업데이트
 		for (let p of this.particles) {
 			p.update(this.c, time - this.lastTime)
 		}
