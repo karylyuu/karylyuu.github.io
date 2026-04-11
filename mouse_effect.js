@@ -106,17 +106,22 @@ class MouseEffect {
 update(time) {
 	this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
+	// 🔥 항상 초기화
+	this.c.globalAlpha = 1
+	this.c.lineWidth = 2
+
+	// 🔥 기본 스타일
 	this.c.fillStyle = "black"
 	this.c.strokeStyle = "black"
 
-	// 🔥 속도 계산
+	// 속도 계산
 	let dx = this.mouseX - this.pmouseX
 	let dy = this.mouseY - this.pmouseY
 	let dist = Math.sqrt(dx * dx + dy * dy)
 	let speed = Math.min(dist / 10, 2)
 
 	// ---------------------------
-	// 1️⃣ 잔상 레이어 (핵심 추가)
+	// 1️⃣ 잔상
 	// ---------------------------
 	if (!this.trails) this.trails = []
 
@@ -129,6 +134,8 @@ update(time) {
 	for (let t of this.trails) {
 		this.c.beginPath()
 		this.c.arc(t.x, t.y, 6 * t.life, 0, 6.283)
+
+		// 🔥 여기 중요 (fillStyle만 쓰고 stroke 영향 X)
 		this.c.fillStyle = `rgba(0,0,0,${t.life * 0.15})`
 		this.c.fill()
 
@@ -138,7 +145,7 @@ update(time) {
 	this.trails = this.trails.filter(t => t.life > 0)
 
 	// ---------------------------
-	// 2️⃣ 부드러운 트레일 라인
+	// 2️⃣ 트레일 라인
 	// ---------------------------
 	if (dist > 0.5) {
 		this.c.beginPath()
@@ -153,11 +160,14 @@ update(time) {
 		this.c.globalAlpha = 0.2 + speed * 0.2
 
 		this.c.stroke()
+
+		// 🔥 반드시 복구
 		this.c.globalAlpha = 1
+		this.c.lineWidth = 2
 	}
 
 	// ---------------------------
-	// 3️⃣ 파티클 (약하게 유지)
+	// 3️⃣ 파티클
 	// ---------------------------
 	if (dist > 2 && Math.random() < 0.2) {
 		this.particles.push(new Particle(this.mouseX, this.mouseY, 2))
@@ -169,8 +179,12 @@ update(time) {
 	this.particles = this.particles.filter(p => p.time > -1)
 
 	// ---------------------------
-	// 4️⃣ 커서 링
+	// 4️⃣ 커서 (⭐ 제일 중요: 항상 마지막)
 	// ---------------------------
+	this.c.strokeStyle = "black"   // 🔥 다시 강제
+	this.c.lineWidth = 2
+	this.c.globalAlpha = 1
+
 	this.hover = Math.min(
 		Math.max(
 			this.hover +
@@ -185,7 +199,6 @@ update(time) {
 	if (!this.isTouchDevice) {
 		this.c.beginPath()
 		this.c.arc(this.mouseX, this.mouseY, 8 + this.hover * 12, 0, 6.283)
-		this.c.lineWidth = 2
 		this.c.stroke()
 	}
 
