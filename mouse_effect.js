@@ -141,23 +141,52 @@ class MouseEffect {
 			this.c.stroke()
 		}
 
-		// ✨ 트레일 (추가된 핵심)
 		let dx = this.mouseX - this.pmouseX
 		let dy = this.mouseY - this.pmouseY
 		let dist = Math.sqrt(dx * dx + dy * dy)
 
 		if (dist > 1) {
-			this.c.globalAlpha = 0.4
-			this.c.lineWidth = 2
+			let speed = Math.min(dist / 10, 2)
+
+			this.c.globalAlpha = 0.3 + speed * 0.3
+			this.c.lineWidth = 1.5
 
 			this.c.beginPath()
 			this.c.moveTo(this.pmouseX, this.pmouseY)
-			this.c.lineTo(this.mouseX, this.mouseY)
+
+			let segments = 6
+			for (let i = 1; i <= segments; i++) {
+				let t = i / segments
+				let x = this.pmouseX + (this.mouseX - this.pmouseX) * t
+				let y = this.pmouseY + (this.mouseY - this.pmouseY) * t
+
+				let offset = (Math.random() - 0.5) * 10 * speed
+				x += offset
+				y += offset
+
+				this.c.lineTo(x, y)
+			}
+
 			this.c.stroke()
+
+			if (Math.random() < 0.25) {
+				this.c.beginPath()
+				this.c.moveTo(this.mouseX, this.mouseY)
+
+				let length = 10 + Math.random() * 20
+				let angle = Math.random() * Math.PI * 2
+
+				this.c.lineTo(
+					this.mouseX + Math.cos(angle) * length,
+					this.mouseY + Math.sin(angle) * length
+				)
+
+				this.c.stroke()
+			}
 
 			this.c.globalAlpha = 1
 		}
-
+		
 		// 파티클 업데이트
 		for (let p of this.particles) {
 			p.update(this.c, time - this.lastTime)
