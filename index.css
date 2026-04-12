@@ -523,6 +523,4 @@ h2.hide > * {
 	user-select: none;
 	z-index: 9999;
 	will-change: transform;
-	border: 2px solid red;
-	background: rgba(255,0,0,0.2);
 }
