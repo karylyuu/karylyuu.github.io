@@ -519,10 +519,8 @@ h2.hide > * {
 #char {
 	position: fixed;
 	width: 120px;
-	left: 80%;
-	top: 60%;
 	cursor: grab;
 	user-select: none;
-	z-index: 9999; /* ⭐ 다른 요소 위에 올라오게 */
+	z-index: 9999;
 	will-change: transform;
 }
