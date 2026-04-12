@@ -519,7 +519,33 @@ h2.hide > * {
 #char {
 	position: fixed;
 	width: 120px;
+
+	/* ❌ 기존 left/top 제거 */
+	left: auto;
+	top: auto;
+
+	/* ✅ 오른쪽 하단 기준 */
+	right: 40px;
+	bottom: 40px;
+
 	cursor: grab;
 	user-select: none;
 	z-index: 9999;
+
+	will-change: transform;
+}
+
+/* 🔥 yuna 느낌 핵심: 바닥 그림자 */
+#char::after {
+	content: "";
+	position: absolute;
+	bottom: -8px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 60%;
+	height: 10px;
+	background: rgba(0, 0, 0, 0.25);
+	border-radius: 50%;
+	filter: blur(4px);
+	pointer-events: none;
 }
