@@ -522,5 +522,4 @@ h2.hide > * {
 	cursor: grab;
 	user-select: none;
 	z-index: 9999;
-	will-change: transform;
 }
