@@ -516,31 +516,34 @@ h2.hide > * {
 	color: #666;
 }
 
-#character {
+#char-wrapper {
 	position: fixed;
 	right: 40px;
 	bottom: 40px;
-	width: 120px;
-	height: 160px;
+
+	width: 140px;
+	height: 180px;
 
 	z-index: 9999;
 	pointer-events: none;
 }
 
-#character img {
+/* 캐릭터 */
+#char {
 	position: absolute;
-	bottom: 20px;
-	left: 0;
-	width: 100%;
+	bottom: 40px;
+	left: 50%;
+	transform: translateX(-50%);
 
+	width: 120px;
+
+	transform-origin: bottom center; /* 🔥 핵심 */
 	cursor: grab;
 	pointer-events: auto;
-
-	transform-origin: bottom center;
 }
 
-/* 🔥 받침대 */
-#character .base {
+/* 받침대 */
+#char-base {
 	position: absolute;
 	bottom: 0;
 	left: 50%;
