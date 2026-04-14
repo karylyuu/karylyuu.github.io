@@ -516,36 +516,37 @@ h2.hide > * {
 	color: #666;
 }
 
-#char {
+#character {
 	position: fixed;
-	width: 120px;
-
-	/* ❌ 기존 left/top 제거 */
-	left: auto;
-	top: auto;
-
-	/* ✅ 오른쪽 하단 기준 */
 	right: 40px;
 	bottom: 40px;
+	width: 120px;
+	height: 160px;
 
-	cursor: grab;
-	user-select: none;
 	z-index: 9999;
-
-	will-change: transform;
+	pointer-events: none;
 }
 
-/* 🔥 yuna 느낌 핵심: 바닥 그림자 */
-#char::after {
-	content: "";
+#character img {
 	position: absolute;
-	bottom: -8px;
+	bottom: 20px;
+	left: 0;
+	width: 100%;
+
+	cursor: grab;
+	pointer-events: auto;
+
+	transform-origin: bottom center;
+}
+
+/* 🔥 받침대 */
+#character .base {
+	position: absolute;
+	bottom: 0;
 	left: 50%;
 	transform: translateX(-50%);
-	width: 60%;
-	height: 10px;
-	background: rgba(0, 0, 0, 0.25);
-	border-radius: 50%;
-	filter: blur(4px);
-	pointer-events: none;
+	width: 6px;
+	height: 40px;
+	background: #888;
+	border-radius: 3px;
 }
