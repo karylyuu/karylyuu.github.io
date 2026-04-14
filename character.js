@@ -1,73 +1,59 @@
-window.addEventListener("load", () => {
-  const wrapper = document.getElementById("character");
-  const el = wrapper.querySelector("img");
+const el = document.getElementById("char");
 
-  let x = 0;
-  let y = 0;
+let angle = 0;        // 현재 각도
+let velocity = 0;     // 각속도
+let acceleration = 0; // 각가속도
 
-  let vx = 2;  // 🔥 처음에 살짝 움직이게
-  let vy = -5;
+const gravity = 0.4;
+const damping = 0.995;
 
-  let dragging = false;
-  let offsetX = 0;
-  let offsetY = 0;
+let dragging = false;
 
-  const gravity = 0.4;
-  const friction = 0.96;
-  const bounce = 0.6;
+// 마우스 드래그
+el.addEventListener("mousedown", () => {
+  dragging = true;
+  el.style.cursor = "grabbing";
+});
 
-  el.addEventListener("mousedown", (e) => {
-    dragging = true;
-    el.style.cursor = "grabbing";
+document.addEventListener("mouseup", () => {
+  dragging = false;
+  el.style.cursor = "grab";
+});
 
-    offsetX = e.clientX - x;
-    offsetY = e.clientY - y;
+document.addEventListener("mousemove", (e) => {
+  if (!dragging) return;
 
-    vx = vy = 0;
-  });
+  const rect = el.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const baseY = rect.bottom; // pivot 기준
 
-  document.addEventListener("mousemove", (e) => {
-    if (!dragging) return;
+  // 마우스 방향으로 각도 계산
+  const dx = e.clientX - centerX;
+  const dy = e.clientY - baseY;
 
-    const newX = e.clientX - offsetX;
-    const newY = e.clientY - offsetY;
+  angle = Math.atan2(dx, dy); // 🔥 핵심
+  velocity = 0;
+});
 
-    vx = newX - x;
-    vy = newY - y;
+function animate() {
+  if (!dragging) {
+    // 🔥 진자 물리
+    acceleration = -Math.sin(angle) * gravity;
 
-    x = newX;
-    y = newY;
-  });
+    velocity += acceleration;
+    velocity *= damping;
 
-  document.addEventListener("mouseup", () => {
-    dragging = false;
-    el.style.cursor = "grab";
-  });
-
-  function animate() {
-    if (!dragging) {
-      vy += gravity;
-
-      x += vx;
-      y += vy;
-
-      vx *= friction;
-      vy *= friction;
-
-      // 🔥 바닥 (받침대 기준)
-      if (y > 0) {
-        y = 0;
-        vy *= -bounce;
-
-        if (Math.abs(vy) < 0.5) vy = 0;
-      }
-    }
-
-    el.style.transform =
-      `translate(${x}px, ${y}px) rotate(${vx * 0.5}deg)`;
-
-    requestAnimationFrame(animate);
+    angle += velocity;
   }
 
-  animate();
-});
+  // 👉 회전 적용
+  el.style.transform =
+    `translateX(-50%) rotate(${angle}rad)`;
+
+  requestAnimationFrame(animate);
+}
+
+// 🔥 처음 흔들림 (yuna 느낌)
+velocity = 0.2;
+
+animate();
