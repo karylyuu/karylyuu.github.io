@@ -517,35 +517,45 @@ h2.hide > * {
 }
 
 #char-wrapper {
-	position: fixed;
-	right: 40px;
-	bottom: 0;
+  position: fixed;
+  right: 60px;
+  bottom: 0;
 
-	width: 120px;
-	height: 160px;
+  width: 140px;
+  height: 220px;
 
-	z-index: 10; /* 🔥 너무 높이면 UI 다 덮음 */
-
-	pointer-events: none; /* 🔥 wrapper는 막고 */
+  transform-origin: bottom center;
+  pointer-events: none;
 }
 
-/* 캐릭터 */
+/* 🔥 막대기 */
+#rod {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+
+  width: 4px;
+  height: 80px;
+
+  background: linear-gradient(to top, #222, #666);
+  transform: translateX(-50%);
+
+  border-radius: 2px;
+}
+
+/* 🔥 캐릭터 */
 #char {
-	position: absolute;
-	bottom: 0;
-	left: 50%;
+  position: absolute;
+  bottom: 80px; /* 막대기 위에 올라감 */
+  left: 50%;
 
-	width: 120px; /* 🔥 크기 강제 지정 (이거 없어서 화면 꽉참) */
+  width: 120px;
 
-	transform: translateX(-50%);
-	transform-origin: bottom center;
+  transform: translateX(-50%);
+  transform-origin: bottom center;
 
-	pointer-events: auto; /* 🔥 얘만 클릭 가능 */
+  pointer-events: auto;
+  cursor: move; /* ✥ 커서 */
 
-	cursor: grab;
-	user-select: none;
-}
-
-#char:active {
-	cursor: grabbing;
+  user-select: none;
 }
