@@ -7,8 +7,11 @@ let acceleration = 0;
 let dragging = false;
 let lastX = 0;
 
-const gravity = 0.015;
-const damping = 0.995;
+const gravity = 0.02;
+const damping = 0.98;
+
+// 🔥 초기 미세 움직임 (유나 느낌)
+velocity = 0.1;
 
 // 드래그 시작
 el.addEventListener("mousedown", (e) => {
@@ -39,6 +42,11 @@ function animate() {
     velocity += acceleration;
     velocity *= damping;
     angle += velocity;
+
+    // 🔥 일정 시간 지나면 멈춤 (유나 느낌)
+    if (Math.abs(velocity) < 0.001) {
+      velocity = 0;
+    }
   }
 
   el.style.transform = `translateX(-50%) rotate(${angle}rad)`;
