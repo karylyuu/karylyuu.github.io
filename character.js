@@ -1,59 +1,54 @@
 const el = document.getElementById("char");
 
-let angle = 0;        // 현재 각도
-let velocity = 0;     // 각속도
-let acceleration = 0; // 각가속도
-
-const gravity = 0.4;
-const damping = 0.995;
+let angle = 0;
+let velocity = 0;
+let acceleration = 0;
 
 let dragging = false;
+let lastX = 0;
 
-// 마우스 드래그
-el.addEventListener("mousedown", () => {
+const gravity = 0.015;
+const damping = 0.995;
+
+// 드래그 시작
+el.addEventListener("mousedown", (e) => {
   dragging = true;
-  el.style.cursor = "grabbing";
+  lastX = e.clientX;
 });
 
-document.addEventListener("mouseup", () => {
-  dragging = false;
-  el.style.cursor = "grab";
-});
-
-document.addEventListener("mousemove", (e) => {
+// 드래그 중
+window.addEventListener("mousemove", (e) => {
   if (!dragging) return;
 
-  const rect = el.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2;
-  const baseY = rect.bottom; // pivot 기준
+  let dx = e.clientX - lastX;
+  lastX = e.clientX;
 
-  // 마우스 방향으로 각도 계산
-  const dx = e.clientX - centerX;
-  const dy = e.clientY - baseY;
+  // 드래그로 각도 변화
+  angle += dx * 0.01;
 
-  angle = Math.atan2(dx, dy); // 🔥 핵심
-  velocity = 0;
+  // 관성 추가 (핵심)
+  velocity = dx * 0.02;
 });
 
+// 드래그 끝
+window.addEventListener("mouseup", () => {
+  dragging = false;
+});
+
+// 애니메이션 루프
 function animate() {
   if (!dragging) {
-    // 🔥 진자 물리
+    // 진자 물리
     acceleration = -Math.sin(angle) * gravity;
-
     velocity += acceleration;
     velocity *= damping;
-
     angle += velocity;
   }
 
-  // 👉 회전 적용
-  el.style.transform =
-    `translateX(-50%) rotate(${angle}rad)`;
+  // 🔥 핵심: rotate만 사용
+  el.style.transform = `rotate(${angle}rad)`;
 
   requestAnimationFrame(animate);
 }
-
-// 🔥 처음 흔들림 (yuna 느낌)
-velocity = 0.2;
 
 animate();
