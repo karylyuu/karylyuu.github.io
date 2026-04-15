@@ -1,33 +1,36 @@
-const el = document.getElementById("char");
+const wrapper = document.getElementById("char-wrapper");
+const char = document.getElementById("char");
 
 let angle = 0;
 let velocity = 0;
-let acceleration = 0;
 
 let dragging = false;
-let lastX = 0;
 
 const gravity = 0.02;
-const damping = 0.98;
-
-// 🔥 초기 미세 움직임 (유나 느낌)
-velocity = 0.1;
+const damping = 0.97;
 
 // 드래그 시작
-el.addEventListener("mousedown", (e) => {
+char.addEventListener("mousedown", (e) => {
   dragging = true;
-  lastX = e.clientX;
 });
 
 // 드래그 중
 window.addEventListener("mousemove", (e) => {
   if (!dragging) return;
 
-  let dx = e.clientX - lastX;
-  lastX = e.clientX;
+  const rect = wrapper.getBoundingClientRect();
 
-  angle += dx * 0.01;
-  velocity = dx * 0.02;
+  const pivotX = rect.left + rect.width / 2;
+  const pivotY = rect.bottom;
+
+  const dx = e.clientX - pivotX;
+  const dy = e.clientY - pivotY;
+
+  // 🔥 각도 계산 (핵심)
+  angle = Math.atan2(dx, dy);
+
+  // 🔥 속도 생성 (핵심)
+  velocity = dx * 0.002;
 });
 
 // 드래그 끝
@@ -38,18 +41,12 @@ window.addEventListener("mouseup", () => {
 // 애니메이션
 function animate() {
   if (!dragging) {
-    acceleration = -Math.sin(angle) * gravity;
-    velocity += acceleration;
+    velocity += -Math.sin(angle) * gravity;
     velocity *= damping;
     angle += velocity;
-
-    // 🔥 일정 시간 지나면 멈춤 (유나 느낌)
-    if (Math.abs(velocity) < 0.001) {
-      velocity = 0;
-    }
   }
 
-  el.style.transform = `translateX(-50%) rotate(${angle}rad)`;
+  wrapper.style.transform = `rotate(${angle}rad)`;
 
   requestAnimationFrame(animate);
 }
