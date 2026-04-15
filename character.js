@@ -23,10 +23,7 @@ window.addEventListener("mousemove", (e) => {
   let dx = e.clientX - lastX;
   lastX = e.clientX;
 
-  // 드래그로 각도 변화
   angle += dx * 0.01;
-
-  // 관성 추가 (핵심)
   velocity = dx * 0.02;
 });
 
@@ -35,18 +32,16 @@ window.addEventListener("mouseup", () => {
   dragging = false;
 });
 
-// 애니메이션 루프
+// 애니메이션
 function animate() {
   if (!dragging) {
-    // 진자 물리
     acceleration = -Math.sin(angle) * gravity;
     velocity += acceleration;
     velocity *= damping;
     angle += velocity;
   }
 
-  // 🔥 핵심: rotate만 사용
-  el.style.transform = `rotate(${angle}rad)`;
+  el.style.transform = `translateX(-50%) rotate(${angle}rad)`;
 
   requestAnimationFrame(animate);
 }
