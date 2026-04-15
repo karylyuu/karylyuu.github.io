@@ -525,20 +525,22 @@ h2.hide > * {
 	height: 180px;
 
 	z-index: 9999;
-	pointer-events: none;
+
+	pointer-events: auto; /* 🔥 수정 1: 클릭 가능하게 */
 }
 
 #char {
-  position: fixed;
-  bottom: 0;
-  right: 40px;
+	position: absolute; /* 🔥 수정 2: fixed → absolute */
+	bottom: 0;
+	left: 50%;
 
-  transform-origin: bottom center; /* 🔥 핵심 */
-  will-change: transform;
+	transform: translateX(-50%); /* 🔥 중심 맞춤 */
+	transform-origin: bottom center;
 
-  cursor: grab;
+	will-change: transform;
+	cursor: grab;
 }
 
 #char:active {
-  cursor: grabbing;
+	cursor: grabbing;
 }
