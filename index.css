@@ -528,28 +528,17 @@ h2.hide > * {
 	pointer-events: none;
 }
 
-/* 캐릭터 */
 #char {
-	position: absolute;
-	bottom: 40px;
-	left: 50%;
-	transform: translateX(-50%);
+  position: fixed;
+  bottom: 0;
+  right: 40px;
 
-	width: 120px;
+  transform-origin: bottom center; /* 🔥 핵심 */
+  will-change: transform;
 
-	transform-origin: bottom center; /* 🔥 핵심 */
-	cursor: grab;
-	pointer-events: auto;
+  cursor: grab;
 }
 
-/* 받침대 */
-#char-base {
-	position: absolute;
-	bottom: 0;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 6px;
-	height: 40px;
-	background: #888;
-	border-radius: 3px;
+#char:active {
+  cursor: grabbing;
 }
