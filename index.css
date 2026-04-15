@@ -519,26 +519,31 @@ h2.hide > * {
 #char-wrapper {
 	position: fixed;
 	right: 40px;
-	bottom: 40px;
+	bottom: 0;
 
-	width: 140px;
-	height: 180px;
+	width: 120px;
+	height: 160px;
 
-	z-index: 9999;
+	z-index: 10; /* 🔥 너무 높이면 UI 다 덮음 */
 
-	pointer-events: auto; /* 🔥 수정 1: 클릭 가능하게 */
+	pointer-events: none; /* 🔥 wrapper는 막고 */
 }
 
+/* 캐릭터 */
 #char {
-	position: absolute; /* 🔥 수정 2: fixed → absolute */
+	position: absolute;
 	bottom: 0;
 	left: 50%;
 
-	transform: translateX(-50%); /* 🔥 중심 맞춤 */
+	width: 120px; /* 🔥 크기 강제 지정 (이거 없어서 화면 꽉참) */
+
+	transform: translateX(-50%);
 	transform-origin: bottom center;
 
-	will-change: transform;
+	pointer-events: auto; /* 🔥 얘만 클릭 가능 */
+
 	cursor: grab;
+	user-select: none;
 }
 
 #char:active {
