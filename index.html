@@ -52,36 +52,27 @@
 	<script src="mouse_effect.js" type="text/javascript"></script>
 	<script src="sprite_animation.js" type="text/javascript"></script>
 	<script src="index.js" type="text/javascript"></script>
-	<div id="sakana-container"></div>
+	<div id="sakana-container">
+		<canvas id="sakana-canvas"></canvas>
+	</div>
 	<script src="https://cdn.jsdelivr.net/npm/sakana-widget@2.0.0/lib/sakana.min.js"></script>
-    <script>
+	<script>
 		document.addEventListener("DOMContentLoaded", function () {
-			
-			const container = document.querySelector("#sakana-container");
-			
-			if (!container) {
-				console.error("sakana-container 못 찾음");
-				return;
-			}
-			
 			const sakana = new SakanaWidget({
-				el: container,
+				el: "#sakana-container"
 			});
-			
 			sakana.mount();
-			
 			sakana.setCharacter({
 				image: "./character.png",
 				scale: 0.5,
 			});
-			
-			container.style.position = "fixed";
-			container.style.right = "40px";
-			container.style.bottom = "0px";
-			container.style.width = "160px";
-			container.style.height = "200px";
-			container.style.zIndex = "9999";
-		
+			const el = document.getElementById("sakana-container");
+			el.style.position = "fixed";
+			el.style.right = "40px";
+			el.style.bottom = "0px";
+			el.style.width = "160px";
+			el.style.height = "200px";
+			el.style.zIndex = "9999";
 		});
 	</script>
 </body>
