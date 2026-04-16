@@ -52,25 +52,20 @@
 	<script src="mouse_effect.js" type="text/javascript"></script>
 	<script src="sprite_animation.js" type="text/javascript"></script>
 	<script src="index.js" type="text/javascript"></script>
-<div id="sakana-widget"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/sakana-widget@1.1.0/dist/sakana.min.js"></script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-  SakanaWidget.mount({
-    el: "#sakana-widget",
-    character: "chisato", // 기본 캐릭터 (테스트용)
-  });
-
-  const el = document.getElementById("sakana-widget");
-
-  el.style.position = "fixed";
-  el.style.right = "40px";
-  el.style.bottom = "0px";
-  el.style.zIndex = "9999";
-});
-</script>
+	<div id="sakana-widget"></div>
+	<script src="sakana.min.js"></script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			SakanaWidget.mount({
+				el: "#sakana-widget",
+				character: "chisato"
+			});
+			const el = document.getElementById("sakana-widget");
+			el.style.position = "fixed";
+			el.style.right = "40px";
+			el.style.bottom = "0px";
+			el.style.zIndex = "9999";
+		});
+	</script>
 </body>
 </html>
