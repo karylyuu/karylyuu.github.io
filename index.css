@@ -516,36 +516,49 @@ h2.hide > * {
 	color: #666;
 }
 
-#sakana-widget {
+/* ===== 캐릭터 시스템 ===== */
+
+#char-root {
   position: fixed;
   right: 40px;
   bottom: 0;
 
   width: 140px;
-  height: 180px;
-
-  z-index: 9999;
+  height: 200px;
 
   display: flex;
   align-items: flex-end;
   justify-content: center;
 
-  pointer-events: none; /* 🔥 중요 */
+  z-index: 9999;
+  pointer-events: none;
 }
 
-#sakana-widget img {
+/* 막대기 */
+#rod {
+  position: absolute;
+  bottom: 0;
+  width: 4px;
+  height: 120px;
+
+  background: linear-gradient(to top, #444, #999);
+  border-radius: 2px;
+
+  opacity: 0.6;
+}
+
+/* 캐릭터 */
+#char {
   width: 120px;
   height: auto;
 
-  transform-origin: bottom center; /* 🔥 핵심 pivot */
+  transform-origin: bottom center;
   will-change: transform;
 
-  pointer-events: auto; /* 🔥 캐릭터만 클릭 가능 */
-
+  pointer-events: auto;
   cursor: grab;
 }
 
-#sakana-widget img:active {
+#char:active {
   cursor: grabbing;
 }
-
