@@ -64,7 +64,7 @@ function animate() {
   const idleBounce = Math.sin(time * 2.2) * 2 * idleStrength;
 
   // 3. 적용
-  root.style.transform = `
+  charRoot.style.transform = `
     rotate(${angle + idleSwing}rad)
     translateY(${idleBounce}px)
   `;
