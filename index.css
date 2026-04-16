@@ -516,42 +516,40 @@ h2.hide > * {
 	color: #666;
 }
 
+/* ===== 캐릭터 시스템 ===== */
+
 #char-system {
   position: fixed;
   right: 40px;
   bottom: 0;
-
   width: 140px;
   height: 200px;
-
   z-index: 9999;
 }
 
-/* rod = 완전 고정 */
+/* 막대기 */
 #rod {
   position: absolute;
   bottom: 0;
   left: 50%;
+  transform: translateX(-50%);
 
   width: 4px;
   height: 120px;
-
   background: linear-gradient(to top, #444, #aaa);
 
-  transform: translateX(-50%);
   pointer-events: none;
 }
 
-/* 회전 대상 */
+/* 회전 기준 */
 #char-root {
   position: absolute;
   bottom: 0;
   left: 50%;
 
   transform-origin: bottom center;
-  transform: translateX(-50%);
 
-  pointer-events: auto;
+  /* ❗ transform 절대 쓰지마 */
 }
 
 /* 캐릭터 */
@@ -559,8 +557,8 @@ h2.hide > * {
   width: 120px;
   display: block;
 
-  pointer-events: auto;
   cursor: grab;
+  pointer-events: auto;
 
   user-select: none;
   -webkit-user-drag: none;
