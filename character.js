@@ -1,4 +1,4 @@
-const root = document.getElementById("char-root"); // 🔥 중요
+const root = document.getElementById("char-root");
 const char = document.getElementById("char");
 
 let angle = 0;
@@ -12,22 +12,19 @@ const damping = 0.90;
 const maxAngle = Math.PI / 4;
 
 let time = 0;
-let idleStrength = 1;
 
-// 드래그 시작
+// ===== 드래그 시작 =====
 char.addEventListener("mousedown", (e) => {
   dragging = true;
-  idleStrength = 0;
-  e.preventDefault(); // 🔥 이미지 드래그 방지
+  e.preventDefault();
 });
 
-// 드래그 종료
+// ===== 드래그 종료 =====
 window.addEventListener("mouseup", () => {
   dragging = false;
-  idleStrength = 1;
 });
 
-// 드래그 이동
+// ===== 드래그 이동 =====
 window.addEventListener("mousemove", (e) => {
   if (!dragging) return;
 
@@ -44,7 +41,7 @@ window.addEventListener("mousemove", (e) => {
   targetAngle = Math.max(-maxAngle, Math.min(maxAngle, raw));
 });
 
-// 애니메이션
+// ===== 애니메이션 =====
 function animate() {
 
   const force = (targetAngle - angle) * stiffness;
@@ -54,10 +51,9 @@ function animate() {
 
   time += 0.016;
 
-  const idleSwing = Math.sin(time * 1.5) * 0.01 * idleStrength;
-  const idleBounce = Math.sin(time * 2.2) * 2 * idleStrength;
+  const idleSwing = Math.sin(time * 1.5) * 0.01;
+  const idleBounce = Math.sin(time * 2.2) * 2;
 
-  // 🔥 핵심: translateX 유지하면서 회전
   root.style.transform = `
     translateX(-50%)
     rotate(${angle + idleSwing}rad)
