@@ -516,40 +516,7 @@ h2.hide > * {
 	color: #666;
 }
 
-#char-wrapper {
-  position: fixed;
-  right: 60px;
-  bottom: 0;
-
-  width: 140px;
-  height: 220px;
-
-  transform-origin: bottom center;
-  pointer-events: none;
-}
-
-#rod {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-
-  width: 4px;
-  height: 90px;
-
-  transform: translateX(-50%);
-  background: linear-gradient(to top, #222, #777);
-}
-
-#char {
-  position: absolute;
-  bottom: 90px;
-  left: 50%;
-
-  width: 120px;
-
-  transform: translateX(-50%);
-  transform-origin: bottom center;
-
-  pointer-events: auto;
-  cursor: move;
+#sakana-container {
+  width: 160px;
+  height: 200px;
 }
