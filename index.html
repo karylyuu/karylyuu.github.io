@@ -54,24 +54,35 @@
 	<script src="index.js" type="text/javascript"></script>
 	<div id="sakana-container"></div>
 	<script src="https://cdn.jsdelivr.net/npm/sakana-widget@2.0.0/lib/sakana.min.js"></script>
-	<script>
-		window.onload = function () {
+    <script>
+		document.addEventListener("DOMContentLoaded", function () {
+			
+			const container = document.querySelector("#sakana-container");
+			
+			if (!container) {
+				console.error("sakana-container 못 찾음");
+				return;
+			}
+			
 			const sakana = new SakanaWidget({
-				 el: document.getElementById("sakana-container"),
+				el: container,
 			});
+			
 			sakana.mount();
+			
 			sakana.setCharacter({
 				image: "./character.png",
 				scale: 0.5,
 			});
-			const el = document.getElementById("sakana-container");
-			el.style.position = "fixed";
-			el.style.right = "40px";
-			el.style.bottom = "0px";
-			el.style.width = "160px";
-			el.style.height = "200px";
-			el.style.zIndex = "9999";
-		};
+			
+			container.style.position = "fixed";
+			container.style.right = "40px";
+			container.style.bottom = "0px";
+			container.style.width = "160px";
+			container.style.height = "200px";
+			container.style.zIndex = "9999";
+		
+		});
 	</script>
 </body>
 </html>
