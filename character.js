@@ -1,65 +1,78 @@
 const wrapper = document.getElementById("char-wrapper");
 const char = document.getElementById("char");
 
+// ===== 상태 =====
 let angle = 0;
 let velocity = 0;
-let targetAngle = 0;
+let angularVelocity = 0;
 
 let dragging = false;
+let lastX = 0;
+let lastTime = 0;
 
 // ===== 파라미터 =====
-const stiffness = 0.06;
-const damping = 0.88;
-const maxAngle = Math.PI / 4;
+const damping = 0.96;
+const gravity = 0.002;
+const maxAngle = Math.PI / 3;
 
 // idle
 let time = 0;
 
-// ===== 드래그 =====
-char.addEventListener("mousedown", () => {
+// ===== 드래그 시작 =====
+char.addEventListener("mousedown", (e) => {
   dragging = true;
+  lastX = e.clientX;
+  lastTime = performance.now();
 });
 
-window.addEventListener("mouseup", () => {
-  dragging = false;
-});
-
+// ===== 드래그 중 =====
 window.addEventListener("mousemove", (e) => {
   if (!dragging) return;
 
-  const rect = wrapper.getBoundingClientRect();
+  const now = performance.now();
+  const dt = now - lastTime;
 
-  const px = rect.left + rect.width / 2;
-  const py = rect.bottom;
+  const dx = e.clientX - lastX;
 
-  const dx = e.clientX - px;
-  const dy = e.clientY - py;
+  lastX = e.clientX;
+  lastTime = now;
 
-  let raw = Math.atan2(dx, dy);
+  // 🔥 핵심: 속도를 직접 계산
+  angularVelocity = dx / dt * 0.05;
+});
 
-  // clamp
-  targetAngle = Math.max(-maxAngle, Math.min(maxAngle, raw));
+// ===== 드래그 끝 =====
+window.addEventListener("mouseup", () => {
+  dragging = false;
 });
 
 // ===== 애니메이션 =====
 function animate() {
 
-  // 1. 스프링 물리
-  const force = (targetAngle - angle) * stiffness;
-  velocity += force;
-  velocity *= damping;
-  angle += velocity;
+  if (!dragging) {
+    // 중력 복원
+    angularVelocity += -angle * gravity;
 
-  // 2. idle 흔들림 (유나 핵심)
+    // 감쇠
+    angularVelocity *= damping;
+
+    // 각도 적용
+    angle += angularVelocity;
+  } else {
+    angle += angularVelocity;
+  }
+
+  // 각도 제한
+  angle = Math.max(-maxAngle, Math.min(maxAngle, angle));
+
+  // ===== idle =====
   time += 0.016;
+  const idle = Math.sin(time * 2) * 0.01;
+  const bounce = Math.sin(time * 3) * 2;
 
-  const idleSwing = Math.sin(time * 1.5) * 0.01;
-  const idleBounce = Math.sin(time * 2.2) * 2; // px
-
-  // 3. 적용
   wrapper.style.transform = `
-    rotate(${angle + idleSwing}rad)
-    translateY(${idleBounce}px)
+    rotate(${angle + idle}rad)
+    translateY(${bounce}px)
   `;
 
   requestAnimationFrame(animate);
