@@ -528,25 +528,21 @@ h2.hide > * {
   pointer-events: none;
 }
 
-/* 🔥 막대기 */
 #rod {
   position: absolute;
   bottom: 0;
   left: 50%;
 
   width: 4px;
-  height: 80px;
+  height: 90px;
 
-  background: linear-gradient(to top, #222, #666);
   transform: translateX(-50%);
-
-  border-radius: 2px;
+  background: linear-gradient(to top, #222, #777);
 }
 
-/* 🔥 캐릭터 */
 #char {
   position: absolute;
-  bottom: 80px; /* 막대기 위에 올라감 */
+  bottom: 90px;
   left: 50%;
 
   width: 120px;
@@ -555,7 +551,5 @@ h2.hide > * {
   transform-origin: bottom center;
 
   pointer-events: auto;
-  cursor: move; /* ✥ 커서 */
-
-  user-select: none;
+  cursor: move;
 }
