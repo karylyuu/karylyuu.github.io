@@ -520,33 +520,52 @@ h2.hide > * {
   position: fixed;
   right: 40px;
   bottom: 0;
+
   width: 140px;
   height: 200px;
+
   z-index: 9999;
 }
 
-/* rod는 고정 */
+/* rod = 완전 고정 */
 #rod {
   position: absolute;
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
 
   width: 4px;
   height: 120px;
-  background: linear-gradient(to top, #444, #999);
+
+  background: linear-gradient(to top, #444, #aaa);
+
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
-/* 캐릭터만 움직임 */
+/* 회전 대상 */
 #char-root {
   position: absolute;
   bottom: 0;
   left: 50%;
+
   transform-origin: bottom center;
   transform: translateX(-50%);
+
+  pointer-events: none;
 }
 
+/* 캐릭터 */
 #char {
   width: 120px;
+  display: block;
+
   pointer-events: auto;
+  cursor: grab;
+
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+#char:active {
+  cursor: grabbing;
 }
