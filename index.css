@@ -516,12 +516,36 @@ h2.hide > * {
 	color: #666;
 }
 
-#sakana-container {
-  width: 160px;
-  height: 200px;
+#sakana-widget {
+  position: fixed;
+  right: 40px;
+  bottom: 0;
+
+  width: 140px;
+  height: 180px;
+
+  z-index: 9999;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  pointer-events: none; /* 🔥 중요 */
 }
 
-#sakana-canvas {
-  width: 100%;
-  height: 100%;
+#sakana-widget img {
+  width: 120px;
+  height: auto;
+
+  transform-origin: bottom center; /* 🔥 핵심 pivot */
+  will-change: transform;
+
+  pointer-events: auto; /* 🔥 캐릭터만 클릭 가능 */
+
+  cursor: grab;
 }
+
+#sakana-widget img:active {
+  cursor: grabbing;
+}
+
