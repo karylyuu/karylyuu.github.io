@@ -1,56 +1,66 @@
 const wrapper = document.getElementById("char-wrapper");
 const char = document.getElementById("char");
 
-// 상태
 let angle = 0;
 let velocity = 0;
 let targetAngle = 0;
 
 let dragging = false;
 
-// 파라미터 (튜닝 핵심)
-const stiffness = 0.08;   // 스프링 힘
-const damping = 0.85;     // 감쇠
-const mass = 1;
+// ===== 파라미터 =====
+const stiffness = 0.06;
+const damping = 0.88;
+const maxAngle = Math.PI / 4;
 
-// 드래그 시작
+// idle
+let time = 0;
+
+// ===== 드래그 =====
 char.addEventListener("mousedown", () => {
   dragging = true;
 });
 
-// 드래그 중 → 목표 각도 설정
+window.addEventListener("mouseup", () => {
+  dragging = false;
+});
+
 window.addEventListener("mousemove", (e) => {
   if (!dragging) return;
 
   const rect = wrapper.getBoundingClientRect();
 
-  const pivotX = rect.left + rect.width / 2;
-  const pivotY = rect.bottom;
+  const px = rect.left + rect.width / 2;
+  const py = rect.bottom;
 
-  const dx = e.clientX - pivotX;
-  const dy = e.clientY - pivotY;
+  const dx = e.clientX - px;
+  const dy = e.clientY - py;
 
-  // 🔥 핵심: 목표 각도
-  targetAngle = Math.atan2(dx, dy);
+  let raw = Math.atan2(dx, dy);
+
+  // clamp
+  targetAngle = Math.max(-maxAngle, Math.min(maxAngle, raw));
 });
 
-// 드래그 끝
-window.addEventListener("mouseup", () => {
-  dragging = false;
-});
-
-// 애니메이션
+// ===== 애니메이션 =====
 function animate() {
 
-  // 🔥 스프링 물리 (핵심)
+  // 1. 스프링 물리
   const force = (targetAngle - angle) * stiffness;
-
-  velocity += force / mass;
+  velocity += force;
   velocity *= damping;
-
   angle += velocity;
 
-  wrapper.style.transform = `rotate(${angle}rad)`;
+  // 2. idle 흔들림 (유나 핵심)
+  time += 0.016;
+
+  const idleSwing = Math.sin(time * 1.5) * 0.01;
+  const idleBounce = Math.sin(time * 2.2) * 2; // px
+
+  // 3. 적용
+  wrapper.style.transform = `
+    rotate(${angle + idleSwing}rad)
+    translateY(${idleBounce}px)
+  `;
 
   requestAnimationFrame(animate);
 }
