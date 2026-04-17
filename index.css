@@ -533,13 +533,13 @@ h2.hide > * {
   position: absolute;
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
 
   width: 4px;
   height: 120px;
+
   background: linear-gradient(to top, #444, #aaa);
 
-  pointer-events: none;
+  transform-origin: bottom center;
 }
 
 /* pivot = 회전 중심 */
