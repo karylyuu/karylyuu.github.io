@@ -516,8 +516,7 @@ h2.hide > * {
 	color: #666;
 }
 
-/* ===== 캐릭터 시스템 ===== */
-
+/* 시스템 전체 */
 #char-system {
   position: fixed;
   right: 40px;
@@ -527,7 +526,7 @@ h2.hide > * {
   z-index: 9999;
 }
 
-/* 막대기 */
+/* 막대기 (완전 고정) */
 #rod {
   position: absolute;
   bottom: 0;
@@ -537,19 +536,20 @@ h2.hide > * {
   width: 4px;
   height: 120px;
   background: linear-gradient(to top, #444, #aaa);
-
-  pointer-events: none;
 }
 
-/* 회전 기준 */
-#char-root {
+/* 회전 중심 */
+#pivot {
   position: absolute;
-  bottom: 0;
+  bottom: 120px; /* rod 끝 */
   left: 50%;
+  transform: translateX(-50%);
+  transform-origin: center bottom;
+}
 
+/* 실제 회전 */
+#char-root {
   transform-origin: bottom center;
-
-  /* ❗ transform 절대 쓰지마 */
 }
 
 /* 캐릭터 */
@@ -558,10 +558,7 @@ h2.hide > * {
   display: block;
 
   cursor: grab;
-  pointer-events: auto;
-
   user-select: none;
-  -webkit-user-drag: none;
 }
 
 #char:active {
