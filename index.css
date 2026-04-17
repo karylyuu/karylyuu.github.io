@@ -554,18 +554,19 @@ h2.hide > * {
 #char-root {
   transform-origin: bottom center;
   will-change: transform;
+  pointer-events: none;
 
-  pointer-events: none; /* 중요 */
+  /* 추가 */
+  display: flex;
+  justify-content: center;
 }
 
-/* 캐릭터 */
+/* 캐릭터 위치 보정 */
 #char {
   width: 120px;
   display: block;
 
-  cursor: grab;
-  pointer-events: auto; /* 이거 하나만 클릭 가능 */
-  user-select: none;
+  transform: translateY(20px); /* ← 이 값 조절 핵심 */
 }
 
 #char:active {
