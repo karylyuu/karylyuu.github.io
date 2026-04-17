@@ -2,25 +2,22 @@ import { config } from "./config.js";
 
 export function updatePhysics(state) {
 
-  // 스프링 복원력
-  const force = -state.angle * config.stiffness;
-  state.velocity += force;
+  // ❗ 드래그 중엔 복원력 제거
+  if (!state.dragging) {
+    const force = -state.angle * 0.045;
+    state.velocity += force;
+  }
 
   // 드래그 힘
-  state.velocity += state.input.dx * config.dragPower;
+  state.velocity += state.input.dx * 0.003;
 
   // 감쇠
-  state.velocity *= config.damping;
+  state.velocity *= 0.92;
 
-  // 각도 적용
   state.angle += state.velocity;
 
-  // 제한
-  state.angle = Math.max(
-    -config.maxAngle,
-    Math.min(config.maxAngle, state.angle)
-  );
+  const max = Math.PI / 3;
+  state.angle = Math.max(-max, Math.min(max, state.angle));
 
-  // 입력 초기화
   state.input.dx = 0;
 }
