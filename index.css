@@ -535,23 +535,21 @@ h2.hide > * {
   will-change: transform;
 }
 
-/* 막대 */
 #rod {
-  width: 3px;
-  height: 80px; /* 기본 1 */
-  background: linear-gradient(to top, #555, #aaa);
+  width: 6px; /* 🔥 기존보다 2배 */
+  height: 50px; /* 🔥 기본 길이 줄임 */
 
+  background: linear-gradient(to top, #555, #aaa);
   transform-origin: bottom center;
 }
 
-/* 캐릭터 */
 #char {
   position: absolute;
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(6px);
 
-  width: 110px;
+  width: 150px; /* 🔥 캐릭터 키움 */
+
   cursor: grab;
 }
-
