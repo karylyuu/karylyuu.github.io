@@ -2,13 +2,13 @@ import { config } from "./config.js";
 
 export function updatePhysics(state) {
 
-  // ❗ 드래그 중엔 복원력 제거
+  // 드래그 중엔 복원력 제거
   if (!state.dragging) {
     const force = -state.angle * 0.045;
     state.velocity += force;
   }
 
-  // 드래그 힘
+  // 입력 힘
   state.velocity += state.input.dx * 0.003;
 
   // 감쇠
