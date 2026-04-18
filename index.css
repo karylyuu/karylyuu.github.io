@@ -516,59 +516,44 @@ h2.hide > * {
 	color: #666;
 }
 
-/* ===== 캐릭터 시스템 (수정 완료 버전) ===== */
-
 #char-system {
   position: fixed;
   right: 40px;
   bottom: 0;
-  width: 140px;
-  height: 220px; /* 살짝 늘림 */
+  width: 120px;
+  height: 200px;
   z-index: 9999;
-  pointer-events: none; /* 핵심 */
 }
 
-/* 막대기 */
-#rod {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-
-  width: 4px;
-  height: 120px;
-
-  background: linear-gradient(to top, #444, #aaa);
-
-  transform-origin: bottom center;
-}
-
-/* pivot = 회전 중심 */
+/* 회전 중심 */
 #pivot {
   position: absolute;
-  bottom: 120px; /* rod 끝 정확히 */
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
 }
 
-/* 실제 회전 대상 */
-#char-root {
-  transform-origin: bottom center;
-  will-change: transform;
-  pointer-events: none;
+/* 막대기 = 부모 */
+#rod {
+  width: 3px;
+  height: 90px; /* 🔥 길이 줄임 */
+  background: linear-gradient(to top, #555, #aaa);
 
-  /* 추가 */
+  transform-origin: bottom center;
+
   display: flex;
   justify-content: center;
 }
 
-/* 캐릭터 위치 보정 */
+/* 캐릭터 */
 #char {
-  width: 120px;
-  display: block;
+  width: 110px;
 
-  transform: translateY(20px); /* ← 이 값 조절 핵심 */
-}
+  position: absolute;
+  bottom: 100%; /* rod 끝에 붙임 */
 
-#char:active {
-  cursor: grabbing;
+  transform: translateY(10px); /* 미세 조정 */
+
+  cursor: grab;
+  user-select: none;
 }
