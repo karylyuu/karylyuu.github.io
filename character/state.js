@@ -1,16 +1,11 @@
 export const state = {
   angle: 0,
-  velocity: 0,
+  angularVel: 0,
 
   length: 50,
-  velocityY: 0, // 🔥 추가
+  lengthVel: 0,
 
   dragging: false,
 
-  mouse: {
-    x: 0,
-    y: 0
-  },
-
-  time: 0
+  mouse: { x: 0, y: 0 }
 };
