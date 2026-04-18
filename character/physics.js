@@ -11,27 +11,28 @@ export function updatePhysics(state) {
   const dx = state.mouse.x - px;
   const dy = state.mouse.y - py;
 
+  const base = 80;
+
   if (state.dragging) {
 
-    // 🔥 올바른 각도
-    const targetAngle = Math.atan2(dx, dy * 1.2);
+    // ✔ 각도 (수정됨)
+    const targetAngle = Math.atan2(dx, -dy);
 
-    // 🔥 튐 방지 (핵심)
-    state.angle += (targetAngle - state.angle) * 0.12;
+    state.angle += (targetAngle - state.angle) * 0.08;
 
-    // 🔥 거리 제한 (핵심)
-    let dist = Math.sqrt(dx * dx + dy * dy);
+    // ✔ 길이 (완전 수정)
+    let targetLength = base + (dy * -0.5);
 
-    const base = 80;
+    const min = base * 0.3;
+    const max = base * 2;
 
-    // 👉 강제 범위 제한
-    dist = Math.max(20, Math.min(160, dist));
+    targetLength = Math.max(min, Math.min(max, targetLength));
 
-    state.length += (dist - state.length) * 0.15;
+    state.length += (targetLength - state.length) * 0.15;
 
   } else {
-    // 자연 복귀
+    // 복귀
     state.angle *= 0.92;
-    state.length += (80 - state.length) * 0.08;
+    state.length += (base - state.length) * 0.08;
   }
 }
