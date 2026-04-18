@@ -516,6 +516,8 @@ h2.hide > * {
 	color: #666;
 }
 
+/* ===== 캐릭터 시스템 (최종 완성형) ===== */
+
 #char-system {
   position: fixed;
   right: 40px;
@@ -531,29 +533,49 @@ h2.hide > * {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
+  will-change: transform;
 }
 
-/* 막대기 = 부모 */
-#rod {
+/* 막대 세그먼트 */
+.rod-seg {
+  position: absolute;
+  left: 50%;
   width: 3px;
-  height: 90px; /* 🔥 길이 줄임 */
   background: linear-gradient(to top, #555, #aaa);
-
   transform-origin: bottom center;
+}
 
-  display: flex;
-  justify-content: center;
+/* 아래 */
+.seg1 {
+  height: 30px;
+  bottom: 0;
+}
+
+/* 중간 */
+.seg2 {
+  height: 30px;
+  bottom: 30px;
+}
+
+/* 위 */
+.seg3 {
+  height: 30px;
+  bottom: 60px;
 }
 
 /* 캐릭터 */
 #char {
-  width: 110px;
-
   position: absolute;
-  bottom: 100%; /* rod 끝에 붙임 */
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
 
-  transform: translateY(10px); /* 미세 조정 */
+  width: 110px;
 
   cursor: grab;
   user-select: none;
+}
+
+#char:active {
+  cursor: grabbing;
 }
