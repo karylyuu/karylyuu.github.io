@@ -1,5 +1,3 @@
-import { config } from "./config.js";
-
 export function updatePhysics(state) {
 
   // 드래그 중엔 복원력 제거
