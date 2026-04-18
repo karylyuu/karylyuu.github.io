@@ -1,11 +1,9 @@
 export function initInput(state) {
 
-  let lastX = 0;
   const char = document.getElementById("char");
 
-  char.addEventListener("mousedown", (e) => {
+  char.addEventListener("mousedown", () => {
     state.dragging = true;
-    lastX = e.clientX;
   });
 
   window.addEventListener("mouseup", () => {
@@ -15,9 +13,7 @@ export function initInput(state) {
   window.addEventListener("mousemove", (e) => {
     if (!state.dragging) return;
 
-    const dx = e.clientX - lastX;
-    lastX = e.clientX;
-
-    state.input.dx += dx;
+    state.mouse.x = e.clientX;
+    state.mouse.y = e.clientY;
   });
 }
