@@ -1,8 +1,9 @@
-export function initInput(state, element) {
+export function initInput(state) {
 
   let lastX = 0;
+  const char = document.getElementById("char");
 
-  element.addEventListener("mousedown", (e) => {
+  char.addEventListener("mousedown", (e) => {
     state.dragging = true;
     lastX = e.clientX;
   });
