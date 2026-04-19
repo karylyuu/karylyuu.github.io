@@ -3,16 +3,6 @@ import { config } from "./config.js";
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
-
-export function initInput(state) {
-  const char = document.getElementById("char");
-  if (!char) return;
-
-  const endDrag = () => {
-    if (!state.dragArmed && !state.dragging) return;
-
-    if (state.dragging) {
-      state.angularVel += clamp(
         state.pointerVX * config.releaseAngleFactor,
         -0.22,
         0.22
