@@ -518,10 +518,11 @@ h2.hide > * {
 
 #char-system {
   position: fixed;
-  right: 40px;
+  right: 28px;
   bottom: 0;
-  width: 200px;
-  height: 300px;
+  width: 190px;
+  height: 260px;
+  z-index: 9999;
   pointer-events: none;
 }
 
@@ -529,28 +530,59 @@ h2.hide > * {
   position: absolute;
   left: 50%;
   bottom: 0;
-  transform: translateX(-50%);
-  transform-origin: bottom center;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 100%;
   will-change: transform;
 }
 
 #rod {
-  width: 6px;
-  height: 80px;
-  margin: 0 auto;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 5px;
+  height: 52px;
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  border-radius: 3px;
   background: linear-gradient(to top, #555, #aaa);
-  border-radius: 999px;
 }
 
 #char {
   position: absolute;
   left: 50%;
-  top: -140px; /* 🔥 핵심: rod 끝에 붙이기 */
-  width: 140px;
-
+  bottom: 34px;
+  width: 150px;
   transform: translateX(-50%);
-  transform-origin: 50% 80%;
-
+  transform-origin: 50% 78%;
   pointer-events: auto;
-  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
+  cursor: none;
+}
+
+#char:active {
+  cursor: none;
+}
+
+#grab-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10000;
+  pointer-events: none;
+  transform: translate(-50%, -55%);
+  font: 400 24px/1 serif;
+  color: #111;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+#grab-cursor[data-visible="true"] {
+  opacity: 1;
+}
+
+body.character-holding {
+  cursor: none;
 }
