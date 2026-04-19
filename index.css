@@ -551,6 +551,3 @@ h2.hide > * {
   pointer-events: auto;
 }
 
-#char:active {
-  cursor: grabbing;
-}
