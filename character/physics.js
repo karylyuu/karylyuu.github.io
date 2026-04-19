@@ -23,18 +23,18 @@ export function updatePhysics(state) {
     // 아래로 끌 때도 각도가 튀지 않게, 세로축은 안정적인 기준값으로 둔다.
     const stabilizedY = Math.max(90, Math.abs(dy) + 40);
 
-    let targetAngle = Math.atan2(dx, -stabilizedY);
+    let targetAngle = dx * 0.0025;
     targetAngle = clamp(targetAngle, -maxAngle, maxAngle);
 
     // 각도는 부드럽게 따라가도록
-    state.angle += (targetAngle - state.angle) * 0.24;
+    state.angle += (targetAngle - state.angle) * 0.18;
 
     // 길이는 방향별 분기 대신 거리 기반으로 자연스럽게
     const distance = Math.hypot(dx, dy);
-    let targetLen = baseLen + distance * 0.16;
-    targetLen = clamp(targetLen, baseLen * 0.78, baseLen * 2.1);
+    let targetLen = baseLen + Math.min(distance * 0.15, 60);
+    targetLen = clamp(targetLen, baseLen * 0.85, baseLen * 1.8);
 
-    state.length += (targetLen - state.length) * 0.22;
+    state.length += (targetLen - state.length) * 0.15;
 
     // 드래그 중에는 관성값을 약하게 정리
     state.angularVel *= 0.78;
