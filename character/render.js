@@ -26,7 +26,6 @@ export function render(state) {
 
   char.style.transform = `
     translateX(-50%)
-    translateY(${state.length}px)
     scaleY(${squashY})
   `;
 }
