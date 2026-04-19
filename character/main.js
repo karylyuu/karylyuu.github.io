@@ -5,9 +5,8 @@ import { render } from "./render.js";
 
 initInput(state);
 
-function animate() {
-
-  state.time += 0.016;
+function animate(time = 0) {
+  state.time = time * 0.001;
 
   updatePhysics(state);
   render(state);
@@ -15,4 +14,4 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-animate();
+requestAnimationFrame(animate);
