@@ -26,17 +26,18 @@ export function updatePhysics(state) {
       config.maxAngle
     );
 
+    // 위로 당기면 길어지고, 아래로 당기면 짧아지게
     const targetLength = clamp(
-      config.baseLength + dy * config.dragLengthFactor,
+      config.baseLength - dy * config.dragLengthFactor,
       config.minLength,
       config.maxLength
     );
 
     state.angle = lerp(state.angle, targetAngle, config.dragEase);
-    state.length = lerp(state.length, targetLength, 0.22);
+    state.length = lerp(state.length, targetLength, 0.24);
 
-    state.angularVel *= 0.72;
-    state.lengthVel *= 0.72;
+    state.angularVel *= 0.76;
+    state.lengthVel *= 0.76;
     return;
   }
 
@@ -48,16 +49,8 @@ export function updatePhysics(state) {
   state.lengthVel *= config.lengthDamping;
   state.length += state.lengthVel;
 
-  if (Math.abs(state.angle) > config.maxAngle) {
-    state.angle = clamp(state.angle, -config.maxAngle, config.maxAngle);
-    state.angularVel *= -0.32;
-  }
-
-  if (
-    Math.abs(state.length - config.baseLength) < 0.05 &&
-    Math.abs(state.lengthVel) < 0.05
-  ) {
-    state.length = config.baseLength;
-    state.lengthVel = 0;
+  if (state.length < config.minLength || state.length > config.maxLength) {
+    state.length = clamp(state.length, config.minLength, config.maxLength);
+    state.lengthVel *= -0.22;
   }
 }
