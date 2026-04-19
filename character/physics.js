@@ -1,6 +1,22 @@
 import { config } from "./config.js";
 
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
 
+function lerp(from, to, amount) {
+  return from + (to - from) * amount;
+}
+
+export function updatePhysics(state) {
+  const pivot = document.getElementById("pivot");
+  if (!pivot) return;
+
+  const rect = pivot.getBoundingClientRect();
+  const anchorX = rect.left + rect.width / 2;
+  const anchorY = rect.bottom;
+
+  const dx = state.mouse.x - anchorX;
   const dy = state.mouse.y - anchorY;
 
   if (state.dragging) {
