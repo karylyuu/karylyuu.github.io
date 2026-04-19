@@ -518,38 +518,45 @@ h2.hide > * {
 
 #char-system {
   position: fixed;
-  right: 40px;
+  right: 24px;
   bottom: 0;
-  width: 120px;
-  height: 220px;
+  width: 170px;
+  height: 260px;
   z-index: 9999;
 }
 
-/* 기준점 */
 #pivot {
   position: absolute;
-  bottom: 0;
   left: 50%;
+  bottom: 0;
   transform: translateX(-50%);
   transform-origin: bottom center;
   will-change: transform;
 }
 
 #rod {
-  width: 6px; /* 🔥 기존보다 2배 */
-  height: 50px; /* 🔥 기본 길이 줄임 */
-
+  width: 6px;
+  height: 50px;
+  margin: 0 auto;
   background: linear-gradient(to top, #555, #aaa);
+  border-radius: 999px;
   transform-origin: bottom center;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03);
 }
 
 #char {
   position: absolute;
-  bottom: 100%;
   left: 50%;
-  transform: translateX(-50%) translateY(6px);
-
-  width: 150px; /* 🔥 캐릭터 키움 */
-
+  bottom: 34px;
+  width: 150px;
+  transform: translateX(-50%) translateY(0px);
+  transform-origin: 50% 72%;
   cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+  will-change: transform;
+}
+
+#char:active {
+  cursor: grabbing;
 }
