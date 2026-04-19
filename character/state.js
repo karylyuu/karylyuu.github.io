@@ -4,18 +4,17 @@ export const state = {
   angle: 0,
   angularVel: 0,
 
-  length: 50,
+  length: 52,
   lengthVel: 0,
 
   dragging: false,
+  dragArmed: false,
 
   mouse: { x: 0, y: 0 },
   prevMouse: { x: 0, y: 0 },
+  dragStart: { x: 0, y: 0 },
 
   pointerVX: 0,
   pointerVY: 0,
-  lastMoveTime: 0,
-
-  releaseAngularVel: 0,
-  releaseLengthVel: 0
+  lastMoveAt: 0
 };
