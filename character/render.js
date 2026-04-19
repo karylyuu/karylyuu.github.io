@@ -1,3 +1,5 @@
+import { config } from "./config.js";
+
 let pivot;
 let rod;
 let char;
@@ -11,7 +13,10 @@ export function render(state) {
 
   if (!pivot || !rod || !char) return;
 
-  const idle = state.dragging ? 0 : Math.sin(state.time * 7) * 0.004;
+  const idle = state.dragging
+    ? 0
+    : Math.sin(state.time * config.idleSpeed) * config.idleAmplitude;
+
   const angle = state.angle + idle;
 
   pivot.style.transform = `
@@ -21,8 +26,10 @@ export function render(state) {
 
   rod.style.height = `${state.length}px`;
 
-  const stretch = Math.max(0, state.length - 50);
-  const squashY = 1 - Math.min(stretch * 0.0025, 0.09);
+  char.style.bottom = `${Math.max(0, state.length - config.charOverlap)}px`;
+
+  const stretch = Math.max(0, state.length - config.baseLength);
+  const squashY = 1 - Math.min(stretch * 0.0018, 0.08);
 
   char.style.transform = `
     translateX(-50%)
