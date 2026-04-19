@@ -530,7 +530,7 @@ h2.hide > * {
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  transform-origin: bottom center;
+  transform-origin: top center;
   will-change: transform;
 }
 
@@ -547,7 +547,7 @@ h2.hide > * {
 #char {
   position: absolute;
   left: 50%;
-  bottom: 34px;
+  bottom: 0;
   width: 150px;
   transform: translateX(-50%) translateY(0px);
   transform-origin: 50% 72%;
