@@ -518,11 +518,11 @@ h2.hide > * {
 
 #char-system {
   position: fixed;
-  right: 24px;
+  right: 40px;
   bottom: 0;
-  width: 170px;
-  height: 260px;
-  z-index: 9999;
+  width: 200px;
+  height: 300px;
+  pointer-events: none;
 }
 
 #pivot {
@@ -530,33 +530,27 @@ h2.hide > * {
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  transform-origin: top center;
+  transform-origin: bottom center;
   will-change: transform;
 }
 
 #rod {
   width: 6px;
-  height: 50px;
+  height: 80px;
   margin: 0 auto;
   background: linear-gradient(to top, #555, #aaa);
   border-radius: 999px;
-  transform-origin: bottom center;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03);
 }
 
 #char {
   position: absolute;
   left: 50%;
-  bottom: 0;
-  width: 150px;
-  transform: translateX(-50%) translateY(0px);
-  transform-origin: 50% 72%;
-  cursor: grab;
-  user-select: none;
-  -webkit-user-drag: none;
-  will-change: transform;
-}
+  top: -140px; /* 🔥 핵심: rod 끝에 붙이기 */
+  width: 140px;
 
-#char:active {
-  cursor: grabbing;
+  transform: translateX(-50%);
+  transform-origin: 50% 80%;
+
+  pointer-events: auto;
+  cursor: grab;
 }
