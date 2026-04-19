@@ -24,8 +24,11 @@ export function render(state) {
 
   rod.style.height = `${state.length}px`;
 
+  // 막대가 캐릭터 중심부로 살짝 파고들어 보이게
+  char.style.bottom = `${Math.max(0, state.length - config.charOverlap)}px`;
+
   const stretch = Math.max(0, state.length - config.baseLength);
-  const squashY = 1 - Math.min(stretch * 0.0018, 0.08);
+  const squashY = 1 - Math.min(stretch * 0.0016, 0.08);
 
   char.style.transform = `
     translateX(-50%)
