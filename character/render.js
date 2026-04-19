@@ -17,16 +17,12 @@ export function render(state) {
     ? 0
     : Math.sin(state.time * config.idleSpeed) * config.idleAmplitude;
 
-  const angle = state.angle + idle;
-
   pivot.style.transform = `
     translateX(-50%)
-    rotate(${angle}rad)
+    rotate(${state.angle + idle}rad)
   `;
 
   rod.style.height = `${state.length}px`;
-
-  char.style.bottom = `${Math.max(0, state.length - config.charOverlap)}px`;
 
   const stretch = Math.max(0, state.length - config.baseLength);
   const squashY = 1 - Math.min(stretch * 0.0018, 0.08);
