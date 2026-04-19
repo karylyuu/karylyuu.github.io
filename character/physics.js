@@ -1,71 +1,65 @@
-export function updatePhysics(state) {
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
 
+export function updatePhysics(state) {
   const pivot = document.getElementById("pivot");
   if (!pivot) return;
 
   const rect = pivot.getBoundingClientRect();
 
-  const px = rect.left + rect.width / 2;
-  const py = rect.bottom;
+  // 현재 리그의 실제 회전 축을 캐릭터 쪽으로 조금 올려 잡는다.
+  // rod가 캐릭터 아래쪽에 살짝 숨는 느낌을 만들기 위해서다.
+  const anchorX = rect.left + rect.width / 2;
+  const anchorY = rect.bottom - 34;
 
-  const dx = state.mouse.x - px;
-  const dy = state.mouse.y - py;
+  const dx = state.mouse.x - anchorX;
+  const dy = state.mouse.y - anchorY;
 
   const baseLen = 50;
+  const maxAngle = Math.PI / 4;
 
   if (state.dragging) {
+    // 아래로 끌 때도 각도가 튀지 않게, 세로축은 안정적인 기준값으로 둔다.
+    const stabilizedY = Math.max(90, Math.abs(dy) + 40);
 
-    // 🎯 목표 각도
-    let targetAngle = Math.atan2(dx, -dy);
+    let targetAngle = Math.atan2(dx, -stabilizedY);
+    targetAngle = clamp(targetAngle, -maxAngle, maxAngle);
 
-    // ✔ 각도 제한 (유나 핵심)
-    const max = Math.PI / 4; // 45도
-    targetAngle = Math.max(-max, Math.min(max, targetAngle));
+    // 각도는 부드럽게 따라가도록
+    state.angle += (targetAngle - state.angle) * 0.24;
 
-    // ✔ 각도 스무딩
-    state.angle += (targetAngle - state.angle) * 0.15;
+    // 길이는 방향별 분기 대신 거리 기반으로 자연스럽게
+    const distance = Math.hypot(dx, dy);
+    let targetLen = baseLen + distance * 0.16;
+    targetLen = clamp(targetLen, baseLen * 0.78, baseLen * 2.1);
 
-    // ✔ 길이 (위/아래 다르게)
-    let targetLen;
+    state.length += (targetLen - state.length) * 0.22;
 
-    if (dy < 0) {
-      targetLen = baseLen + (-dy * 0.5);
-    } else {
-      targetLen = baseLen - (dy * 0.25);
+    // 드래그 중에는 관성값을 약하게 정리
+    state.angularVel *= 0.78;
+    state.lengthVel *= 0.78;
+  } else {
+    // 놓는 순간의 속도 보정
+    if (state.releaseAngularVel) {
+      state.angularVel += state.releaseAngularVel;
+      state.releaseAngularVel *= 0.45;
+      if (Math.abs(state.releaseAngularVel) < 0.0005) state.releaseAngularVel = 0;
     }
 
-    const min = baseLen * 0.4;
-    const maxLen = baseLen * 2;
+    if (state.releaseLengthVel) {
+      state.lengthVel += state.releaseLengthVel;
+      state.releaseLengthVel *= 0.45;
+      if (Math.abs(state.releaseLengthVel) < 0.01) state.releaseLengthVel = 0;
+    }
 
-    targetLen = Math.max(min, Math.min(maxLen, targetLen));
-
-    state.length += (targetLen - state.length) * 0.2;
-
-    // 🔥 드래그 중엔 속도 초기화 (중요)
-    state.angularVel = 0;
-    state.lengthVel = 0;
-
-  } else {
-
-    // =========================
-    // 🔥 진짜 물리 (유나 핵심)
-    // =========================
-
-    // ✔ 각도 스프링
-    const angleSpring = -state.angle * 0.06;
-    state.angularVel += angleSpring;
-
-    // ✔ 감쇠
-    state.angularVel *= 0.92;
-
-    // ✔ 적용
+    // 복원 스프링
+    state.angularVel += -state.angle * 0.09;
+    state.angularVel *= 0.90;
     state.angle += state.angularVel;
 
-    // ✔ 길이 스프링
-    const lenSpring = (baseLen - state.length) * 0.1;
-    state.lengthVel += lenSpring;
-
-    state.lengthVel *= 0.85;
+    state.lengthVel += (baseLen - state.length) * 0.12;
+    state.lengthVel *= 0.86;
     state.length += state.lengthVel;
   }
 }
