@@ -4,10 +4,6 @@ function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
-function lerp(from, to, amount) {
-  return from + (to - from) * amount;
-}
-
 export function updatePhysics(state) {
   const pivot = document.getElementById("pivot");
   if (!pivot) return;
@@ -33,24 +29,35 @@ export function updatePhysics(state) {
       config.maxLength
     );
 
-    state.angle = lerp(state.angle, targetAngle, config.dragEase);
-    state.length = lerp(state.length, targetLength, 0.24);
+    const angleError = targetAngle - state.angle;
+    const lengthError = targetLength - state.length;
 
-    state.angularVel *= 0.76;
-    state.lengthVel *= 0.76;
-    return;
+    state.angularVel += angleError * config.dragAngleSpring;
+    state.lengthVel += lengthError * config.dragLengthSpring;
+
+    // 아주 약한 축간 결합으로 '원운동 같은 귀환감'을 만든다
+    state.angularVel += state.lengthVel * config.releaseCoupling * 0.5;
+    state.lengthVel += state.angularVel * config.releaseCoupling * 0.25;
+
+    state.angularVel *= config.dragAngleDamping;
+    state.lengthVel *= config.dragLengthDamping;
+
+    state.angle += state.angularVel;
+    state.length += state.lengthVel;
+  } else {
+    state.angularVel += -state.angle * config.releaseAngleSpring;
+    state.lengthVel += (config.baseLength - state.length) * config.releaseLengthSpring;
+
+    state.angularVel += state.lengthVel * config.releaseCoupling;
+    state.lengthVel += state.angularVel * (config.releaseCoupling * 0.35);
+
+    state.angularVel *= config.releaseAngleDamping;
+    state.lengthVel *= config.releaseLengthDamping;
+
+    state.angle += state.angularVel;
+    state.length += state.lengthVel;
   }
 
-  state.angularVel += -state.angle * config.springK;
-  state.angularVel *= config.damping;
-  state.angle += state.angularVel;
-
-  state.lengthVel += (config.baseLength - state.length) * config.lengthSpringK;
-  state.lengthVel *= config.lengthDamping;
-  state.length += state.lengthVel;
-
-  if (state.length < config.minLength || state.length > config.maxLength) {
-    state.length = clamp(state.length, config.minLength, config.maxLength);
-    state.lengthVel *= -0.22;
-  }
+  state.angle = clamp(state.angle, -config.maxAngle, config.maxAngle);
+  state.length = clamp(state.length, config.minLength, config.maxLength);
 }
