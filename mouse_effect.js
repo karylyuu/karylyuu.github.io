@@ -109,9 +109,15 @@ class MouseEffect {
 
 		this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
+		const overCharacter =
+			typeof window.__characterHitTest === "function"
+			? window.__characterHitTest(this.mouseX, this.mouseY)
+			: false;
+		
 		if (
 			(this.mouseX != this.pmouseX || this.mouseY != this.pmouseY) &&
 			this.hover < 0.2
+			!overCharacter
 		) {
 			this.particleColddown += time - this.lastTime
 		}
@@ -132,7 +138,7 @@ class MouseEffect {
 			1
 		)
 
-		if (!this.isTouchDevice) {
+		if (!this.isTouchDevice && !overCharacter) {
 			this.c.beginPath()
 			this.c.arc(this.mouseX, this.mouseY, 8 + this.hover * 10, 0, 6.28318)
 			this.c.stroke()
@@ -142,7 +148,7 @@ class MouseEffect {
 		let dy = this.mouseY - this.pmouseY
 		let dist = Math.sqrt(dx * dx + dy * dy)
 
-		if (dist > 1) {
+		if (dist > 1 !overCharacter) {
 			let speed = Math.min(dist / 10, 2)
 
 			this.c.globalAlpha = 0.3 + speed * 0.3
