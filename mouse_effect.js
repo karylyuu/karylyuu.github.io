@@ -195,3 +195,13 @@ class MouseEffect {
 		this.lastTime = time
 	}
 }
+
+// block particles on character
+const originalUpdate = this?.update?.bind(this);
+if (originalUpdate) {
+  this.update = function(...args){
+    const hit = window.__characterHitTest?.(this.mouseX, this.mouseY);
+    if (hit) return;
+    return originalUpdate(...args);
+  }
+}
