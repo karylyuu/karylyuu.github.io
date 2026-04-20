@@ -16,5 +16,7 @@ export const state = {
 
   pointerVX: 0,
   pointerVY: 0,
-  lastMoveAt: 0
+  lastMoveAt: 0,
+
+  releaseMode: 1
 };
