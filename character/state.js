@@ -4,7 +4,7 @@ export const state = {
   angle: 0,
   angularVel: 0,
 
-  length: 52,
+  length: 50,
   lengthVel: 0,
 
   dragging: false,
