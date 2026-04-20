@@ -571,3 +571,6 @@ h2.hide > * {
 #char:active {
   cursor: inherit;
 }
+
+#char { cursor: default; }
+#char.hit { cursor: move; }
