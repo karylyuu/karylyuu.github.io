@@ -68,3 +68,33 @@ export function updatePhysics(state) {
   state.angle = clamp(state.angle, -config.maxAngle, config.maxAngle);
   state.length = clamp(state.length, config.minLength, config.maxLength);
 }
+
+// === Improved Physics Patch ===
+const SMOOTH = 0.15;
+function smoothVelocity(state, dx, dy, dt) {
+  state.pointerVX = state.pointerVX * (1 - SMOOTH) + (dx / dt) * SMOOTH;
+  state.pointerVY = state.pointerVY * (1 - SMOOTH) + (dy / dt) * SMOOTH;
+}
+
+function applySpring(state) {
+  let stretch = state.offsetY;
+  let k = stretch < 0 ? 0.015 : 0.008;
+  let damping = 0.85;
+
+  state.velocityY += -stretch * k;
+  state.velocityY *= damping;
+  state.offsetY += state.velocityY;
+
+  if (Math.abs(state.offsetY) < 0.5) {
+    state.offsetY = 0;
+    state.velocityY *= -0.4;
+  }
+
+  state.velocityX += -state.offsetX * 0.01;
+  state.velocityX *= 0.9;
+  state.offsetX += state.velocityX;
+
+  const maxUp = -200;
+  const maxDown = 60;
+  state.offsetY = Math.max(maxUp, Math.min(maxDown, state.offsetY));
+}
