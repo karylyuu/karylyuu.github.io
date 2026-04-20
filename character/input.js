@@ -12,7 +12,6 @@ function createAlphaHitTester(img) {
 
   const redraw = () => {
     if (!img.naturalWidth || !img.naturalHeight) return;
-
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -55,11 +54,15 @@ export function initInput(state) {
   if (!char) return;
 
   const hitTest = createAlphaHitTester(char);
-  window.__characterHitTest = hitTest;
 
-  const updateCursor = (x, y, forceMove = false) => {
-    const hit = forceMove ? true : hitTest(x, y);
-    document.body.style.cursor = hit ? "move" : "none";
+  const syncCursor = (x, y, forceMove = false) => {
+    if (forceMove) {
+      char.style.cursor = "move";
+      return true;
+    }
+
+    const hit = hitTest(x, y);
+    char.style.cursor = hit ? "move" : "auto";
     return hit;
   };
 
@@ -67,25 +70,30 @@ export function initInput(state) {
     if (!state.dragArmed && !state.dragging) return;
 
     if (state.dragging) {
+      const stretch = state.length - config.baseLength;
+      const stretchBoost = stretch > 0 ? 1.35 : 0.8;
+
       state.angularVel += clamp(
-        state.pointerVX * config.releaseAngleSpring * 0.02,
-        -0.28,
-        0.28
+        state.pointerVX * config.releaseAngleFactor * stretchBoost,
+        -0.3,
+        0.3
       );
 
       state.lengthVel += clamp(
-        -state.pointerVY * config.releaseLengthSpring * 0.02,
-        -1.6,
-        1.6
+        -state.pointerVY * config.releaseLengthFactor * stretchBoost,
+        -1.8,
+        1.8
       );
+
+      state.lengthVel += clamp(stretch * 0.02, -1.0, 1.0);
     }
 
     state.dragArmed = false;
     state.dragging = false;
-    document.body.style.cursor = "none";
+    char.style.cursor = "auto";
   };
 
-  char.addEventListener("pointerdown", (e) => {
+  char.addEventListener("mousedown", (e) => {
     if (e.button !== 0) return;
     if (!hitTest(e.clientX, e.clientY)) return;
 
@@ -104,53 +112,45 @@ export function initInput(state) {
     state.pointerVX = 0;
     state.pointerVY = 0;
     state.lastMoveAt = performance.now();
-
-    document.body.style.cursor = "move";
-    char.setPointerCapture?.(e.pointerId);
   });
 
-  window.addEventListener(
-    "pointermove",
-    (e) => {
-      const hit = updateCursor(e.clientX, e.clientY, state.dragging);
+  window.addEventListener("mousemove", (e) => {
+    const over = syncCursor(e.clientX, e.clientY, state.dragging);
 
-      if (!state.dragArmed && !state.dragging) return;
+    if (!state.dragArmed && !state.dragging) return;
 
-      const now = performance.now();
-      const dt = Math.max((now - state.lastMoveAt) / 1000, 1 / 120);
+    const now = performance.now();
+    const dt = Math.max((now - state.lastMoveAt) / 1000, 1 / 120);
 
-      const dx = e.clientX - state.prevMouse.x;
-      const dy = e.clientY - state.prevMouse.y;
+    const dx = e.clientX - state.prevMouse.x;
+    const dy = e.clientY - state.prevMouse.y;
 
-      state.pointerVX = dx / dt;
-      state.pointerVY = dy / dt;
+    state.pointerVX = dx / dt;
+    state.pointerVY = dy / dt;
 
-      state.prevMouse.x = e.clientX;
-      state.prevMouse.y = e.clientY;
-      state.mouse.x = e.clientX;
-      state.mouse.y = e.clientY;
-      state.lastMoveAt = now;
+    state.prevMouse.x = e.clientX;
+    state.prevMouse.y = e.clientY;
+    state.mouse.x = e.clientX;
+    state.mouse.y = e.clientY;
+    state.lastMoveAt = now;
 
-      if (state.dragArmed && !state.dragging) {
-        const moved = Math.hypot(
-          e.clientX - state.dragStart.x,
-          e.clientY - state.dragStart.y
-        );
+    if (state.dragArmed && !state.dragging) {
+      const moved = Math.hypot(
+        e.clientX - state.dragStart.x,
+        e.clientY - state.dragStart.y
+      );
 
-        if (moved < config.dragThreshold) return;
+      if (moved < config.dragThreshold) return;
 
-        state.dragging = true;
-        document.body.style.cursor = "move";
-      }
+      state.dragging = true;
+      char.style.cursor = "move";
+    }
 
-      if (state.dragging && hit) {
-        document.body.style.cursor = "move";
-      }
-    },
-    { passive: true }
-  );
+    if (state.dragging && over) {
+      char.style.cursor = "move";
+    }
+  });
 
-  window.addEventListener("pointerup", endDrag);
-  window.addEventListener("pointercancel", endDrag);
+  window.addEventListener("mouseup", endDrag);
   window.addEventListener("blur", endDrag);
 }
