@@ -16,28 +16,25 @@ export function updatePhysics(state) {
   const dy = state.mouse.y - anchorY;
 
   if (state.dragging) {
-    const targetAngle = clamp(
-      dx * config.dragAngleFactor,
-      -config.maxAngle,
-      config.maxAngle
-    );
+    const rawAngle = dx * config.angleFactor;
+    const targetAngle = clamp(rawAngle, -config.maxAngle, config.maxAngle);
 
-    // 위로 당기면 길어지고, 아래로 당기면 짧아지게
+    const overflow = Math.max(0, Math.abs(rawAngle) - config.maxAngle);
+    const overflowShrink = overflow * config.overflowLengthFactor * config.baseLength;
+
+    const vertical =
+      dy < 0
+        ? -dy * config.upLengthFactor
+        : -dy * config.downLengthFactor;
+
     const targetLength = clamp(
-      config.baseLength - dy * config.dragLengthFactor,
+      config.baseLength + vertical - overflowShrink,
       config.minLength,
       config.maxLength
     );
 
-    const angleError = targetAngle - state.angle;
-    const lengthError = targetLength - state.length;
-
-    state.angularVel += angleError * config.dragAngleSpring;
-    state.lengthVel += lengthError * config.dragLengthSpring;
-
-    // 아주 약한 축간 결합으로 '원운동 같은 귀환감'을 만든다
-    state.angularVel += state.lengthVel * config.releaseCoupling * 0.5;
-    state.lengthVel += state.angularVel * config.releaseCoupling * 0.25;
+    state.angularVel += (targetAngle - state.angle) * config.dragAngleSpring;
+    state.lengthVel += (targetLength - state.length) * config.dragLengthSpring;
 
     state.angularVel *= config.dragAngleDamping;
     state.lengthVel *= config.dragLengthDamping;
@@ -45,8 +42,12 @@ export function updatePhysics(state) {
     state.angle += state.angularVel;
     state.length += state.lengthVel;
   } else {
+    const stretch = state.length - config.baseLength;
+    const lengthSpring =
+      stretch >= 0 ? config.releaseLengthSpringUp : config.releaseLengthSpringDown;
+
     state.angularVel += -state.angle * config.releaseAngleSpring;
-    state.lengthVel += (config.baseLength - state.length) * config.releaseLengthSpring;
+    state.lengthVel += (config.baseLength - state.length) * lengthSpring;
 
     state.angularVel += state.lengthVel * config.releaseCoupling;
     state.lengthVel += state.angularVel * (config.releaseCoupling * 0.35);
