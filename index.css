@@ -10,7 +10,7 @@
 
 html {
 	scroll-behavior: smooth;
-	cursor: default;
+	cursor: none;
 	-webkit-user-select: none;
 	user-select: none;
 }
