@@ -10,6 +10,7 @@
 
 html {
 	scroll-behavior: smooth;
+	cursor: none;
 	-webkit-user-select: none;
 	user-select: none;
 }
@@ -22,7 +23,7 @@ body {
 }
 
 a {
-	cursor: auto;
+	cursor: none;
 }
 
 .pixel {
