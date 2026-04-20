@@ -1,32 +1,34 @@
 export const config = {
   baseLength: 50,
-  minLength: 34,
-  maxLength: 122,
-
-  // 막대가 캐릭터 몸 안쪽으로 들어가는 깊이
-  rodHeadOverlap: 52,
+  minLength: 40,
+  maxLength: 105,
 
   maxAngle: Math.PI / 4,
   dragThreshold: 5,
 
-  dragAngleFactor: 0.00215,
-  dragLengthFactor: 0.45,
+  angleFactor: 0.00195,
 
-  dragAngleSpring: 0.10,
-  dragLengthSpring: 0.11,
-  dragAngleDamping: 0.90,
-  dragLengthDamping: 0.90,
+  upLengthFactor: 0.52,
+  downLengthFactor: 0.14,
+  overflowLengthFactor: 0.85,
 
-  releaseAngleSpring: 0.072,
-  releaseLengthSpring: 0.085,
-  releaseAngleDamping: 0.92,
-  releaseLengthDamping: 0.91,
+  dragAngleSpring: 0.11,
+  dragLengthSpring: 0.14,
+  dragAngleDamping: 0.86,
+  dragLengthDamping: 0.88,
 
-  // 길이와 각도 사이에 아주 약한 곡선 감각을 주는 값
-  releaseCoupling: 0.0016,
+  releaseAngleSpringUp: 0.082,
+  releaseAngleSpringDown: 0.064,
+  releaseLengthSpringUp: 0.13,
+  releaseLengthSpringDown: 0.085,
 
-  idleAmplitude: 0.0025,
-  idleSpeed: 6.2,
+  releaseAngleDamping: 0.905,
+  releaseLengthDamping: 0.915,
+
+  coupling: 0.0016,
+
+  idleAmplitude: 0.0022,
+  idleSpeed: 6.1,
 
   alphaThreshold: 18
 };
