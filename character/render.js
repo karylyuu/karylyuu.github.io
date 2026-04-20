@@ -22,10 +22,8 @@ export function render(state) {
     rotate(${state.angle + idle}rad)
   `;
 
-  rod.style.height = `${state.length}px`;
-
-  // 막대가 캐릭터 중심부로 살짝 파고들어 보이게
-  char.style.bottom = `${Math.max(0, state.length - config.charOverlap)}px`;
+  // rod가 캐릭터 몸 안쪽으로 더 들어가도록 충분한 오버랩을 준다
+  rod.style.height = `${state.length + config.rodHeadOverlap}px`;
 
   const stretch = Math.max(0, state.length - config.baseLength);
   const squashY = 1 - Math.min(stretch * 0.0016, 0.08);
