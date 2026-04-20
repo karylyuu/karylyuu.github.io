@@ -54,23 +54,15 @@ export function initInput(state) {
   if (!char) return;
 
   const hitTest = createAlphaHitTester(char);
-
-  const syncCursor = (x, y) => {
-    const hit = hitTest(x, y);
-    char.style.cursor = hit ? "move" : "auto";
-    return hit;
-  };
+  window.__characterHitTest = hitTest;
 
   const endDrag = () => {
     if (!state.dragArmed && !state.dragging) return;
-
     state.dragArmed = false;
     state.dragging = false;
-
-    char.style.cursor = "auto";
   };
 
-  char.addEventListener("mousedown", (e) => {
+  char.addEventListener("pointerdown", (e) => {
     if (e.button !== 0) return;
     if (!hitTest(e.clientX, e.clientY)) return;
 
@@ -90,12 +82,10 @@ export function initInput(state) {
     state.pointerVY = 0;
     state.lastMoveAt = performance.now();
 
-    char.style.cursor = "move";
+    char.setPointerCapture?.(e.pointerId);
   });
 
-  window.addEventListener("mousemove", (e) => {
-    const over = syncCursor(e.clientX, e.clientY);
-
+  window.addEventListener("pointermove", (e) => {
     if (!state.dragArmed && !state.dragging) return;
 
     const now = performance.now();
@@ -121,14 +111,10 @@ export function initInput(state) {
 
       if (moved < config.dragThreshold) return;
       state.dragging = true;
-      char.style.cursor = "move";
-    }
-
-    if (state.dragging && over) {
-      char.style.cursor = "move";
     }
   });
 
-  window.addEventListener("mouseup", endDrag);
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("pointercancel", endDrag);
   window.addEventListener("blur", endDrag);
 }
