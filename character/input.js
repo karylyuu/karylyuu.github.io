@@ -12,6 +12,7 @@ function createAlphaHitTester(img) {
 
   const redraw = () => {
     if (!img.naturalWidth || !img.naturalHeight) return;
+
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -54,13 +55,12 @@ export function initInput(state) {
   if (!char) return;
 
   const hitTest = createAlphaHitTester(char);
+  window.__characterHitTest = hitTest;
 
-  const setCursor = (visible, grabbing = false) => {
-    if (!visible) {
-      char.style.cursor = "none";
-      return;
-    }
-    char.style.cursor = grabbing ? "grabbing" : "move";
+  const updateCursor = (x, y, forceMove = false) => {
+    const hit = forceMove ? true : hitTest(x, y);
+    document.body.style.cursor = hit ? "move" : "none";
+    return hit;
   };
 
   const endDrag = () => {
@@ -68,13 +68,13 @@ export function initInput(state) {
 
     if (state.dragging) {
       state.angularVel += clamp(
-        state.pointerVX * config.releaseAngleFactor,
+        state.pointerVX * config.releaseAngleSpring * 0.02,
         -0.28,
         0.28
       );
 
       state.lengthVel += clamp(
-        -state.pointerVY * config.releaseLengthFactor,
+        -state.pointerVY * config.releaseLengthSpring * 0.02,
         -1.6,
         1.6
       );
@@ -82,8 +82,7 @@ export function initInput(state) {
 
     state.dragArmed = false;
     state.dragging = false;
-    document.body.classList.remove("character-holding");
-    setCursor(false);
+    document.body.style.cursor = "none";
   };
 
   char.addEventListener("pointerdown", (e) => {
@@ -106,50 +105,50 @@ export function initInput(state) {
     state.pointerVY = 0;
     state.lastMoveAt = performance.now();
 
-    document.body.classList.add("character-holding");
-    setCursor(true, false);
-
+    document.body.style.cursor = "move";
     char.setPointerCapture?.(e.pointerId);
   });
 
-  char.addEventListener("pointermove", (e) => {
-    const hit = hitTest(e.clientX, e.clientY);
+  window.addEventListener(
+    "pointermove",
+    (e) => {
+      const hit = updateCursor(e.clientX, e.clientY, state.dragging);
 
-    if (!state.dragging) {
-      setCursor(hit, false);
-    }
+      if (!state.dragArmed && !state.dragging) return;
 
-    if (!state.dragArmed && !state.dragging) return;
+      const now = performance.now();
+      const dt = Math.max((now - state.lastMoveAt) / 1000, 1 / 120);
 
-    const now = performance.now();
-    const dt = Math.max((now - state.lastMoveAt) / 1000, 1 / 120);
+      const dx = e.clientX - state.prevMouse.x;
+      const dy = e.clientY - state.prevMouse.y;
 
-    const dx = e.clientX - state.prevMouse.x;
-    const dy = e.clientY - state.prevMouse.y;
+      state.pointerVX = dx / dt;
+      state.pointerVY = dy / dt;
 
-    state.pointerVX = dx / dt;
-    state.pointerVY = dy / dt;
+      state.prevMouse.x = e.clientX;
+      state.prevMouse.y = e.clientY;
+      state.mouse.x = e.clientX;
+      state.mouse.y = e.clientY;
+      state.lastMoveAt = now;
 
-    state.prevMouse.x = e.clientX;
-    state.prevMouse.y = e.clientY;
-    state.mouse.x = e.clientX;
-    state.mouse.y = e.clientY;
-    state.lastMoveAt = now;
+      if (state.dragArmed && !state.dragging) {
+        const moved = Math.hypot(
+          e.clientX - state.dragStart.x,
+          e.clientY - state.dragStart.y
+        );
 
-    if (state.dragArmed && !state.dragging) {
-      const moved = Math.hypot(
-        e.clientX - state.dragStart.x,
-        e.clientY - state.dragStart.y
-      );
+        if (moved < config.dragThreshold) return;
 
-      if (moved < config.dragThreshold) return;
+        state.dragging = true;
+        document.body.style.cursor = "move";
+      }
 
-      state.dragging = true;
-      setCursor(true, true);
-    } else if (state.dragging) {
-      setCursor(true, true);
-    }
-  });
+      if (state.dragging && hit) {
+        document.body.style.cursor = "move";
+      }
+    },
+    { passive: true }
+  );
 
   window.addEventListener("pointerup", endDrag);
   window.addEventListener("pointercancel", endDrag);
