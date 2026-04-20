@@ -10,7 +10,6 @@
 
 html {
 	scroll-behavior: smooth;
-	cursor: none;
 	-webkit-user-select: none;
 	user-select: none;
 }
@@ -23,7 +22,7 @@ body {
 }
 
 a {
-	cursor: none;
+	cursor: auto;
 }
 
 .pixel {
@@ -520,19 +519,18 @@ h2.hide > * {
   position: fixed;
   right: 40px;
   bottom: 0;
-  width: 150px;
-  height: 240px;
+  width: 120px;
+  height: 220px;
   z-index: 9999;
   overflow: visible;
   pointer-events: none;
 }
 
+/* 기준점 */
 #pivot {
   position: absolute;
-  left: 50%;
   bottom: 0;
-  width: 100%;
-  height: 100%;
+  left: 50%;
   transform: translateX(-50%);
   transform-origin: bottom center;
   will-change: transform;
@@ -540,34 +538,27 @@ h2.hide > * {
 }
 
 #rod {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
   width: 6px;
   height: 50px;
-  transform: translateX(-50%);
-  transform-origin: bottom center;
   background: linear-gradient(to top, #555, #aaa);
+  transform-origin: bottom center;
   border-radius: 3px;
   pointer-events: none;
-  z-index: 1;
 }
 
 #char {
   position: absolute;
+  bottom: 100%;
   left: 50%;
-  bottom: 28px;
-  width: 150px;
   transform: translateX(-50%);
-  transform-origin: 50% 78%;
-  z-index: 2;
+  width: 150px;
+  cursor: auto;
   pointer-events: auto;
   user-select: none;
   -webkit-user-drag: none;
   touch-action: none;
-  cursor: inherit;
 }
 
-#char:active {
-  cursor: inherit;
+#char:hover {
+  cursor: move;
 }
