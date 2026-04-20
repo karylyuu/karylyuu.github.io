@@ -15,41 +15,49 @@ export function updatePhysics(state) {
   const dx = state.mouse.x - anchorX;
   const dy = state.mouse.y - anchorY;
 
+  const baseLength = config.baseLength;
+
   if (state.dragging) {
-    const targetAngle = clamp(
-      dx * config.dragAngleFactor,
-      -config.maxAngle,
-      config.maxAngle
-    );
+    const rawAngle = dx * config.angleFactor;
+    const targetAngle = clamp(rawAngle, -config.maxAngle, config.maxAngle);
 
-    // 위로 당기면 길어지고, 아래로 당기면 짧아지게
-    const targetLength = clamp(
-      config.baseLength - dy * config.dragLengthFactor,
-      config.minLength,
-      config.maxLength
-    );
+    const overflow = Math.max(0, Math.abs(rawAngle) - config.maxAngle);
+    const overflowShrink = overflow * config.overflowLengthFactor * baseLength;
 
-    const angleError = targetAngle - state.angle;
-    const lengthError = targetLength - state.length;
+    const verticalStretch =
+      dy < 0
+        ? Math.min(-dy * config.upLengthFactor, baseLength * 1.05)
+        : -Math.min(dy * config.downLengthFactor, baseLength * 0.20);
 
-    state.angularVel += angleError * config.dragAngleSpring;
-    state.lengthVel += lengthError * config.dragLengthSpring;
+    let targetLength = baseLength + verticalStretch - overflowShrink;
+    targetLength = clamp(targetLength, config.minLength, config.maxLength);
 
-    // 아주 약한 축간 결합으로 '원운동 같은 귀환감'을 만든다
-    state.angularVel += state.lengthVel * config.releaseCoupling * 0.5;
-    state.lengthVel += state.angularVel * config.releaseCoupling * 0.25;
+    state.angularVel += (targetAngle - state.angle) * config.dragAngleSpring;
+    state.lengthVel += (targetLength - state.length) * config.dragLengthSpring;
 
     state.angularVel *= config.dragAngleDamping;
     state.lengthVel *= config.dragLengthDamping;
 
     state.angle += state.angularVel;
     state.length += state.lengthVel;
-  } else {
-    state.angularVel += -state.angle * config.releaseAngleSpring;
-    state.lengthVel += (config.baseLength - state.length) * config.releaseLengthSpring;
 
-    state.angularVel += state.lengthVel * config.releaseCoupling;
-    state.lengthVel += state.angularVel * (config.releaseCoupling * 0.35);
+    state.releaseMode = dy < 0 ? 1 : -1;
+  } else {
+    const releaseAngleSpring =
+      state.releaseMode > 0
+        ? config.releaseAngleSpringUp
+        : config.releaseAngleSpringDown;
+
+    const releaseLengthSpring =
+      state.releaseMode > 0
+        ? config.releaseLengthSpringUp
+        : config.releaseLengthSpringDown;
+
+    state.angularVel += -state.angle * releaseAngleSpring;
+    state.lengthVel += (baseLength - state.length) * releaseLengthSpring;
+
+    state.angularVel += state.lengthVel * config.coupling;
+    state.lengthVel += state.angularVel * (config.coupling * 0.35);
 
     state.angularVel *= config.releaseAngleDamping;
     state.lengthVel *= config.releaseLengthDamping;
