@@ -565,12 +565,10 @@ h2.hide > * {
   user-select: none;
   -webkit-user-drag: none;
   touch-action: none;
-  cursor: inherit;
+  cursor: none;
 }
 
-#char:active {
-  cursor: inherit;
+#char.hit,
+#char.hit:active {
+  cursor: move;
 }
-
-#char { cursor: default; }
-#char.hit { cursor: move; }
