@@ -39,11 +39,50 @@ class MouseEffect {
 	pmouseY = 0
 	hover = 0
 	onHoverTarget = false
+	characterHover = false
 	isTouchDevice = false
 	particles = []
 	particleColddown = 0
 	lastTime = 0
 	updated = false
+
+	drawMoveCursor() {
+		const c = this.c
+		const x = this.mouseX
+		const y = this.mouseY
+
+		c.save()
+		c.strokeStyle = 'black'
+		c.fillStyle = 'black'
+		c.lineWidth = 2
+
+		// four-direction move cursor
+		c.beginPath()
+		c.moveTo(x - 12, y)
+		c.lineTo(x + 12, y)
+		c.moveTo(x, y - 12)
+		c.lineTo(x, y + 12)
+		c.stroke()
+
+		const head = (ax, ay, bx, by) => {
+			c.beginPath()
+			c.moveTo(ax, ay)
+			c.lineTo(bx, by)
+			const dx = bx - ax
+			const dy = by - ay
+			c.lineTo(bx - dx * 0.25 - dy * 0.25, by - dy * 0.25 + dx * 0.25)
+			c.moveTo(bx, by)
+			c.lineTo(bx - dx * 0.25 + dy * 0.25, by - dy * 0.25 - dx * 0.25)
+			c.stroke()
+		}
+
+		head(x, y - 7, x, y - 16)
+		head(x, y + 7, x, y + 16)
+		head(x - 7, y, x - 16, y)
+		head(x + 7, y, x + 16, y)
+
+		c.restore()
+	}
 
 	constructor(id, hoverTarget) {
 		this.canvas = document.createElement('canvas')
@@ -85,7 +124,8 @@ class MouseEffect {
 		}
 
 		addEventListener('mousedown', e => {
-			if (e.button == 0) {
+			const characterHover = !!window.__characterHitTest?.(this.mouseX, this.mouseY)
+			if (e.button == 0 && !characterHover) {
 				for (let i = 0; i < 5; i++) {
 					this.particles.push(new Particle(this.mouseX, this.mouseY, 1))
 				}
@@ -104,21 +144,24 @@ class MouseEffect {
 	}
 
 	update(time) {
-		this.c.fillStyle = "black"
-		this.c.strokeStyle = "black"
-
+		this.c.fillStyle = 'black'
+		this.c.strokeStyle = 'black'
 		this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
-		if (
-			(this.mouseX != this.pmouseX || this.mouseY != this.pmouseY) &&
-			this.hover < 0.2
-		) {
-			this.particleColddown += time - this.lastTime
-		}
+		this.characterHover = !!window.__characterHitTest?.(this.mouseX, this.mouseY)
 
-		while (this.particleColddown > 50) {
-			this.particleColddown -= 50
-			this.particles.push(new Particle(this.mouseX, this.mouseY, 2))
+		if (!this.characterHover) {
+			if (
+				(this.mouseX != this.pmouseX || this.mouseY != this.pmouseY) &&
+				this.hover < 0.2
+			) {
+				this.particleColddown += time - this.lastTime
+			}
+
+			while (this.particleColddown > 50) {
+				this.particleColddown -= 50
+				this.particles.push(new Particle(this.mouseX, this.mouseY, 2))
+			}
 		}
 
 		this.hover = Math.min(
@@ -133,57 +176,63 @@ class MouseEffect {
 		)
 
 		if (!this.isTouchDevice) {
-			this.c.beginPath()
-			this.c.arc(this.mouseX, this.mouseY, 8 + this.hover * 10, 0, 6.28318)
-			this.c.stroke()
-		}
-
-		let dx = this.mouseX - this.pmouseX
-		let dy = this.mouseY - this.pmouseY
-		let dist = Math.sqrt(dx * dx + dy * dy)
-
-		if (dist > 1) {
-			let speed = Math.min(dist / 10, 2)
-
-			this.c.globalAlpha = 0.3 + speed * 0.3
-			this.c.lineWidth = 1.5
-
-			this.c.beginPath()
-			this.c.moveTo(this.pmouseX, this.pmouseY)
-
-			let segments = 6
-			for (let i = 1; i <= segments; i++) {
-				let t = i / segments
-				let x = this.pmouseX + (this.mouseX - this.pmouseX) * t
-				let y = this.pmouseY + (this.mouseY - this.pmouseY) * t
-
-				let offset = (Math.random() - 0.5) * 10 * speed
-				x += offset
-				y += offset
-
-				this.c.lineTo(x, y)
-			}
-
-			this.c.stroke()
-
-			if (Math.random() < 0.25) {
+			if (this.characterHover) {
+				this.drawMoveCursor()
+			} else {
 				this.c.beginPath()
-				this.c.moveTo(this.mouseX, this.mouseY)
-
-				let length = 10 + Math.random() * 20
-				let angle = Math.random() * Math.PI * 2
-
-				this.c.lineTo(
-					this.mouseX + Math.cos(angle) * length,
-					this.mouseY + Math.sin(angle) * length
-				)
-
+				this.c.arc(this.mouseX, this.mouseY, 8 + this.hover * 10, 0, 6.28318)
 				this.c.stroke()
 			}
-
-			this.c.globalAlpha = 1
 		}
-		
+
+		if (!this.characterHover) {
+			let dx = this.mouseX - this.pmouseX
+			let dy = this.mouseY - this.pmouseY
+			let dist = Math.sqrt(dx * dx + dy * dy)
+
+			if (dist > 1) {
+				let speed = Math.min(dist / 10, 2)
+
+				this.c.globalAlpha = 0.3 + speed * 0.3
+				this.c.lineWidth = 1.5
+
+				this.c.beginPath()
+				this.c.moveTo(this.pmouseX, this.pmouseY)
+
+				let segments = 6
+				for (let i = 1; i <= segments; i++) {
+					let t = i / segments
+					let x = this.pmouseX + (this.mouseX - this.pmouseX) * t
+					let y = this.pmouseY + (this.mouseY - this.pmouseY) * t
+
+					let offset = (Math.random() - 0.5) * 10 * speed
+					x += offset
+					y += offset
+
+					this.c.lineTo(x, y)
+				}
+
+				this.c.stroke()
+
+				if (Math.random() < 0.25) {
+					this.c.beginPath()
+					this.c.moveTo(this.mouseX, this.mouseY)
+
+					let length = 10 + Math.random() * 20
+					let angle = Math.random() * Math.PI * 2
+
+					this.c.lineTo(
+						this.mouseX + Math.cos(angle) * length,
+						this.mouseY + Math.sin(angle) * length
+					)
+
+					this.c.stroke()
+				}
+
+				this.c.globalAlpha = 1
+			}
+		}
+
 		for (let p of this.particles) {
 			p.update(this.c, time - this.lastTime)
 		}
@@ -194,14 +243,4 @@ class MouseEffect {
 		this.pmouseY = this.mouseY
 		this.lastTime = time
 	}
-}
-
-// block particles on character
-const originalUpdate = this?.update?.bind(this);
-if (originalUpdate) {
-  this.update = function(...args){
-    const hit = window.__characterHitTest?.(this.mouseX, this.mouseY);
-    if (hit) return;
-    return originalUpdate(...args);
-  }
 }
