@@ -56,11 +56,28 @@ export function initInput(state) {
   const hitTest = createAlphaHitTester(char);
   window.__characterHitTest = hitTest;
 
+  const syncCharCursor = (clientX, clientY) => {
+    char.classList.toggle("hit", hitTest(clientX, clientY));
+  };
+
   const endDrag = () => {
     if (!state.dragArmed && !state.dragging) return;
     state.dragArmed = false;
     state.dragging = false;
+    char.classList.remove("hit");
   };
+
+  window.addEventListener("pointermove", (e) => {
+    syncCharCursor(e.clientX, e.clientY);
+  });
+
+  window.addEventListener("pointerleave", () => {
+    char.classList.remove("hit");
+  });
+
+  document.addEventListener("mouseleave", () => {
+    char.classList.remove("hit");
+  });
 
   char.addEventListener("pointerdown", (e) => {
     if (e.button !== 0) return;
