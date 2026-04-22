@@ -65,12 +65,19 @@ export function initInput(state) {
 
   const endDrag = () => {
     if (!state.dragArmed && !state.dragging) return;
+
+    state.releaseForce = Math.max(
+      state.dragForce,
+      clamp(state.pointerSpeed / 1800, 0, 1)
+    );
+    
     state.dragArmed = false;
     state.dragging = false;
     state.pointerSpeed = 0;
     state.dragForce = 0;
     window.__characterDragging = false;
-    char.classList.remove("hit");
+
+    syncHoverState(state.mouse.x, state.mouse.y);
   };
 
   window.addEventListener("pointermove", (e) => {
