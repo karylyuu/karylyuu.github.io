@@ -20,6 +20,7 @@ export const state = {
   pointerVY: 0,
   pointerSpeed: 0,
   dragForce: 0,
+  releaseForce: 0,
 
   lastMoveAt: 0,
   releaseMode: 1,
