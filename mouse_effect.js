@@ -86,6 +86,12 @@ class MouseEffect {
 
 				this.onHoverTarget = isChar || isDragging
 
+				// 🔥 핵심: 캐릭터 위 or 드래그 중이면 잔상 끊기
+				if (this.onHoverTarget) {
+					this.pmouseX = this.mouseX
+					this.pmouseY = this.mouseY
+				}
+
 				this.updated = false
 			})
 		}
@@ -105,11 +111,12 @@ class MouseEffect {
 			this.mouseY = e.touches[0].clientY
 		})
 
-		resetTrail() {
-			this.pmouseX = this.mouseX;
-			this.pmouseY = this.mouseY;
+		// ✅ 문법 수정 핵심 (constructor 내부 함수 형태)
+		this.resetTrail = () => {
+			this.pmouseX = this.mouseX
+			this.pmouseY = this.mouseY
 		}
-		
+
 		window.addEventListener('blur', () => {
 			this.isWindowActive = false
 			this.onHoverTarget = false
