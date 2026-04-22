@@ -568,14 +568,14 @@ h2.hide > * {
   cursor: inherit;
 }
 
-#char:active {
-  cursor: inherit;
-}
-
 #char.hit {
   cursor: move !important;
 }
 
 #char.hit:active {
   cursor: move !important;
+}
+
+#char:active {
+  cursor: inherit;
 }
