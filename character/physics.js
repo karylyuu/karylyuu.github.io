@@ -30,14 +30,19 @@ export function updatePhysics(state, time = 0) {
     const overflow = Math.max(0, Math.abs(rawAngle) - config.maxAngle);
     const overflowShrink = overflow * config.overflowLengthFactor * config.baseLength;
 
-    const speedForce = smoothStep(clamp(state.pointerSpeed / 1800, 0, 1)) * state.dragForce;
+   const drive = clamp(
+     state.dragForce * 0.55 +
+     smoothStep(clamp(state.pointerSpeed / 1800, 0, 1)) * 0.85,
+     0,
+     1
+   );
 
     const pullUp = dy < 0
-      ? Math.min(-dy * config.upLengthFactor * (1 + speedForce * 0.45), config.baseLength * 1.15)
+      ? Math.min(-dy * config.upLengthFactor * (1 + drive * 0.45), config.baseLength * 1.15)
       : 0;
 
     const pullDown = dy >= 0
-      ? -Math.min(dy * config.downLengthFactor * (1 + speedForce * 0.20), config.baseLength * 0.22)
+      ? -Math.min(dy * config.downLengthFactor * (1 + drive * 0.20), config.baseLength * 0.22)
       : 0;
 
     const speedStretch = -state.pointerVY * config.speedLengthFactor * 0.010;
@@ -48,8 +53,8 @@ export function updatePhysics(state, time = 0) {
     state.angularVel += (targetAngle - state.angle) * config.dragAngleSpring * dt;
     state.lengthVel += (targetLength - state.length) * config.dragLengthSpring * dt;
 
-    state.angularVel += state.pointerVX * 0.0000025 * speedForce * dt;
-    state.lengthVel += -state.pointerVY * 0.00022 * speedForce * dt;
+    state.angularVel += state.pointerVX * 0.0000025 * drive * dt;
+    state.lengthVel += -state.pointerVY * 0.00022 * drive * dt;
 
     state.angularVel *= Math.pow(config.dragAngleDamping, dt);
     state.lengthVel *= Math.pow(config.dragLengthDamping, dt);
@@ -76,7 +81,7 @@ export function updatePhysics(state, time = 0) {
     : config.releaseLengthDampingDown;
 
   const stretchRatio = clamp(Math.abs(state.length - config.baseLength) / config.baseLength, 0, 1);
-  const energy = smoothStep(clamp(state.dragForce + stretchRatio * 0.6, 0, 1));
+  const energy = smoothStep(clamp(state.releaseForce + stretchRatio * 0.6, 0, 1));
 
   state.angularVel += (-state.angle * releaseAngleSpring + (releaseUp ? config.releaseAngleKickUp : -config.releaseAngleKickDown) * energy) * dt;
   state.lengthVel += ((config.baseLength - state.length) * releaseLengthSpring + (releaseUp ? config.releaseLengthKickUp : config.releaseLengthKickDown) * energy) * dt;
