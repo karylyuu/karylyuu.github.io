@@ -56,63 +56,37 @@ export function initInput(state) {
   const hitTest = createAlphaHitTester(char);
   window.__characterHitTest = hitTest;
 
-  const syncCharCursor = (clientX, clientY) => {
-    char.classList.toggle("hit", hitTest(clientX, clientY));
+  const syncHoverState = (clientX, clientY) => {
+    const hovering = hitTest(clientX, clientY);
+    state.hoverCharacter = hovering;
+    window.__characterHover = hovering;
+    char.classList.toggle("hit", hovering);
   };
 
   const endDrag = () => {
     if (!state.dragArmed && !state.dragging) return;
     state.dragArmed = false;
     state.dragging = false;
+    state.pointerSpeed = 0;
+    state.dragForce = 0;
+    window.__characterDragging = false;
     char.classList.remove("hit");
   };
 
   window.addEventListener("pointermove", (e) => {
-    syncCharCursor(e.clientX, e.clientY);
-  });
+    syncHoverState(e.clientX, e.clientY);
 
-  window.addEventListener("pointerleave", () => {
-    char.classList.remove("hit");
-  });
-
-  document.addEventListener("mouseleave", () => {
-    char.classList.remove("hit");
-  });
-
-  char.addEventListener("pointerdown", (e) => {
-    if (e.button !== 0) return;
-    if (!hitTest(e.clientX, e.clientY)) return;
-
-    e.preventDefault();
-
-    state.dragArmed = true;
-    state.dragging = false;
-
-    state.mouse.x = e.clientX;
-    state.mouse.y = e.clientY;
-    state.prevMouse.x = e.clientX;
-    state.prevMouse.y = e.clientY;
-    state.dragStart.x = e.clientX;
-    state.dragStart.y = e.clientY;
-
-    state.pointerVX = 0;
-    state.pointerVY = 0;
-    state.lastMoveAt = performance.now();
-
-    char.setPointerCapture?.(e.pointerId);
-  });
-
-  window.addEventListener("pointermove", (e) => {
     if (!state.dragArmed && !state.dragging) return;
 
     const now = performance.now();
-    const dt = Math.max((now - state.lastMoveAt) / 1000, 1 / 120);
+    const dt = Math.max((now - state.lastMoveAt) / 1000, 1 / 240);
 
     const dx = e.clientX - state.prevMouse.x;
     const dy = e.clientY - state.prevMouse.y;
 
     state.pointerVX = dx / dt;
     state.pointerVY = dy / dt;
+    state.pointerSpeed = Math.hypot(state.pointerVX, state.pointerVY);
 
     state.prevMouse.x = e.clientX;
     state.prevMouse.y = e.clientY;
@@ -128,7 +102,56 @@ export function initInput(state) {
 
       if (moved < config.dragThreshold) return;
       state.dragging = true;
+      window.__characterDragging = true;
     }
+
+    const pullDistance = Math.hypot(
+      e.clientX - state.dragStart.x,
+      e.clientY - state.dragStart.y
+    );
+    state.dragForce = clamp(
+      pullDistance / Math.max(window.innerHeight * 0.35, 180),
+      0,
+      1
+    );
+  });
+
+  window.addEventListener("pointerleave", () => {
+    state.hoverCharacter = false;
+    window.__characterHover = false;
+    char.classList.remove("hit");
+  });
+
+  document.addEventListener("mouseleave", () => {
+    state.hoverCharacter = false;
+    window.__characterHover = false;
+    char.classList.remove("hit");
+  });
+
+  char.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    if (!hitTest(e.clientX, e.clientY)) return;
+
+    e.preventDefault();
+
+    state.dragArmed = true;
+    state.dragging = false;
+    window.__characterDragging = true;
+
+    state.mouse.x = e.clientX;
+    state.mouse.y = e.clientY;
+    state.prevMouse.x = e.clientX;
+    state.prevMouse.y = e.clientY;
+    state.dragStart.x = e.clientX;
+    state.dragStart.y = e.clientY;
+
+    state.pointerVX = 0;
+    state.pointerVY = 0;
+    state.pointerSpeed = 0;
+    state.dragForce = 0;
+    state.lastMoveAt = performance.now();
+
+    char.setPointerCapture?.(e.pointerId);
   });
 
   window.addEventListener("pointerup", endDrag);
