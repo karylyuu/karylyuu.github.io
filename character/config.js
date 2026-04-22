@@ -1,9 +1,9 @@
 export const config = {
   baseLength: 50,
-  minLength: 42,
-  maxLength: 116,
+  minLength: 38,
+  maxLength: 124,
 
-  // 막대가 캐릭터 몸 안쪽으로 더 들어가는 깊이
+  // 막대가 몸체 안쪽으로 더 파고드는 정도
   rodHeadOverlap: 72,
 
   maxAngle: Math.PI / 4,
@@ -11,24 +11,32 @@ export const config = {
 
   // 좌우 반응
   angleFactor: 0.0019,
-  dragAngleSpring: 0.09,
-  dragAngleDamping: 0.90,
-  releaseAngleSpringUp: 0.12,
-  releaseAngleSpringDown: 0.07,
-  releaseAngleDamping: 0.88,
+  speedAngleFactor: 0.00022,
+  dragAngleSpring: 0.14,
+  dragAngleDamping: 0.84,
+  releaseAngleSpringUp: 0.18,
+  releaseAngleSpringDown: 0.11,
+  releaseAngleDampingUp: 0.92,
+  releaseAngleDampingDown: 0.86,
+  releaseAngleKickUp: 0.030,
+  releaseAngleKickDown: 0.018,
 
   // 상하 반응
-  upLengthFactor: 0.60,
-  downLengthFactor: 0.13,
-  overflowLengthFactor: 1.00,
-  dragLengthSpring: 0.12,
-  dragLengthDamping: 0.90,
-  releaseLengthSpringUp: 0.20,
-  releaseLengthSpringDown: 0.10,
-  releaseLengthDamping: 0.88,
+  upLengthFactor: 0.62,
+  downLengthFactor: 0.12,
+  speedLengthFactor: 0.040,
+  overflowLengthFactor: 0.90,
+  dragLengthSpring: 0.16,
+  dragLengthDamping: 0.84,
+  releaseLengthSpringUp: 0.21,
+  releaseLengthSpringDown: 0.11,
+  releaseLengthDampingUp: 0.93,
+  releaseLengthDampingDown: 0.86,
+  releaseLengthKickUp: 4.2,
+  releaseLengthKickDown: 2.0,
 
   // 축간 결합감
-  coupling: 0.004,
+  coupling: 0.010,
 
   idleAmplitude: 0.0022,
   idleSpeed: 6.1,
