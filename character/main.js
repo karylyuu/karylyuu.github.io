@@ -8,7 +8,7 @@ initInput(state);
 function animate(time = 0) {
   state.time = time * 0.001;
 
-  updatePhysics(state);
+  updatePhysics(state, time);
   render(state);
 
   requestAnimationFrame(animate);
