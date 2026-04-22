@@ -78,9 +78,13 @@ class MouseEffect {
 					? e.touches[0].clientY
 					: e.clientY
 
-				const target = e.target instanceof Element ? e.target : null
-				this.onHoverTarget =
-					!!target?.closest?.(hoverTarget) && !event.startsWith('touch')
+				const isChar = window.__characterHitTest
+					? window.__characterHitTest(this.mouseX, this.mouseY)
+					: false
+
+				const isDragging = window.__characterDragging === true
+
+				this.onHoverTarget = isChar || isDragging
 
 				this.updated = false
 			})
@@ -101,12 +105,16 @@ class MouseEffect {
 			this.mouseY = e.touches[0].clientY
 		})
 
+		resetTrail() {
+			this.pmouseX = this.mouseX;
+			this.pmouseY = this.mouseY;
+		}
+		
 		window.addEventListener('blur', () => {
 			this.isWindowActive = false
 			this.onHoverTarget = false
 			this.hover = 0
-			this.pmouseX = this.mouseX
-			this.pmouseY = this.mouseY
+			this.resetTrail()
 		})
 
 		window.addEventListener('focus', () => {
@@ -116,16 +124,14 @@ class MouseEffect {
 
 		document.addEventListener('mouseleave', () => {
 			this.onHoverTarget = false
-			this.pmouseX = this.mouseX
-			this.pmouseY = this.mouseY
+			this.resetTrail()
 		})
 
 		document.addEventListener('visibilitychange', () => {
 			if (document.hidden) {
 				this.isWindowActive = false
 				this.onHoverTarget = false
-				this.pmouseX = this.mouseX
-				this.pmouseY = this.mouseY
+				this.resetTrail()
 			} else {
 				this.isWindowActive = true
 				this.updated = false
@@ -162,7 +168,12 @@ class MouseEffect {
 			1
 		)
 
-		const canDrawCursor = !this.isTouchDevice && this.isWindowActive && !this.onHoverTarget
+		const canDrawCursor =
+			!this.isTouchDevice &&
+			this.isWindowActive &&
+			!this.onHoverTarget &&
+			Number.isFinite(this.mouseX) &&
+			Number.isFinite(this.mouseY)
 
 		if (canDrawCursor) {
 			this.c.beginPath()
