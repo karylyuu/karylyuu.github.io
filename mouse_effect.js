@@ -40,6 +40,7 @@ class MouseEffect {
 	hover = 0
 	onHoverTarget = false
 	isTouchDevice = false
+	isWindowActive = true
 	particles = []
 	particleColddown = 0
 	lastTime = 0
@@ -77,8 +78,9 @@ class MouseEffect {
 					? e.touches[0].clientY
 					: e.clientY
 
+				const target = e.target instanceof Element ? e.target : null
 				this.onHoverTarget =
-					!!e.target.closest?.(hoverTarget) && !event.startsWith('touch')
+					!!target?.closest?.(hoverTarget) && !event.startsWith('touch')
 
 				this.updated = false
 			})
@@ -99,8 +101,36 @@ class MouseEffect {
 			this.mouseY = e.touches[0].clientY
 		})
 
-		document.addEventListener('mouseleave', () => (this.onHoverTarget = false))
-		window.addEventListener('scroll', () => (this.onHoverTarget = false))
+		window.addEventListener('blur', () => {
+			this.isWindowActive = false
+			this.onHoverTarget = false
+			this.hover = 0
+			this.pmouseX = this.mouseX
+			this.pmouseY = this.mouseY
+		})
+
+		window.addEventListener('focus', () => {
+			this.isWindowActive = true
+			this.updated = false
+		})
+
+		document.addEventListener('mouseleave', () => {
+			this.onHoverTarget = false
+			this.pmouseX = this.mouseX
+			this.pmouseY = this.mouseY
+		})
+
+		document.addEventListener('visibilitychange', () => {
+			if (document.hidden) {
+				this.isWindowActive = false
+				this.onHoverTarget = false
+				this.pmouseX = this.mouseX
+				this.pmouseY = this.mouseY
+			} else {
+				this.isWindowActive = true
+				this.updated = false
+			}
+		})
 	}
 
 	update(time) {
@@ -108,8 +138,6 @@ class MouseEffect {
 		this.c.strokeStyle = "black"
 
 		this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
-
-		const hideCursor = window.__characterHover || window.__characterDragging
 
 		if (
 			(this.mouseX != this.pmouseX || this.mouseY != this.pmouseY) &&
@@ -134,7 +162,9 @@ class MouseEffect {
 			1
 		)
 
-		if (!this.isTouchDevice && !hideCursor) {
+		const canDrawCursor = !this.isTouchDevice && this.isWindowActive && !this.onHoverTarget
+
+		if (canDrawCursor) {
 			this.c.beginPath()
 			this.c.arc(this.mouseX, this.mouseY, 8 + this.hover * 10, 0, 6.28318)
 			this.c.stroke()
@@ -144,7 +174,7 @@ class MouseEffect {
 		let dy = this.mouseY - this.pmouseY
 		let dist = Math.sqrt(dx * dx + dy * dy)
 
-		if (!hideCursor && dist > 1) {
+		if (canDrawCursor && dist > 1) {
 			let speed = Math.min(dist / 10, 2)
 
 			this.c.globalAlpha = 0.3 + speed * 0.3
