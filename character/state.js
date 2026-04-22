@@ -1,5 +1,6 @@
 export const state = {
   time: 0,
+  lastPhysicsTime: 0,
 
   angle: 0,
   angularVel: 0,
@@ -9,6 +10,7 @@ export const state = {
 
   dragging: false,
   dragArmed: false,
+  hoverCharacter: false,
 
   mouse: { x: 0, y: 0 },
   prevMouse: { x: 0, y: 0 },
@@ -16,7 +18,9 @@ export const state = {
 
   pointerVX: 0,
   pointerVY: 0,
-  lastMoveAt: 0,
+  pointerSpeed: 0,
+  dragForce: 0,
 
-  releaseMode: 1
+  lastMoveAt: 0,
+  releaseMode: 1,
 };
