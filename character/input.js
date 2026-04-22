@@ -55,8 +55,10 @@ export function initInput(state) {
 
   const hitTest = createAlphaHitTester(char);
   window.__characterHitTest = hitTest;
+  window.__characterHover = false;
+  window.__characterDragging = false;
 
-  const syncHoverState = (clientX, clientY) => {
+  const syncCharCursor = (clientX, clientY) => {
     const hovering = hitTest(clientX, clientY);
     state.hoverCharacter = hovering;
     window.__characterHover = hovering;
@@ -66,27 +68,28 @@ export function initInput(state) {
   const endDrag = () => {
     if (!state.dragArmed && !state.dragging) return;
 
-    state.releaseForce = Math.max(
-      state.dragForce,
-      clamp(state.pointerSpeed / 1800, 0, 1)
-    );
-    
     state.dragArmed = false;
     state.dragging = false;
-    state.pointerSpeed = 0;
-    state.dragForce = 0;
     window.__characterDragging = false;
 
-    syncHoverState(state.mouse.x, state.mouse.y);
+    state.pointerSpeed = 0;
+    state.dragForce = 0;
+
+    if (Number.isFinite(state.mouse.x) && Number.isFinite(state.mouse.y)) {
+      syncCharCursor(state.mouse.x, state.mouse.y);
+    } else {
+      window.__characterHover = false;
+      char.classList.remove("hit");
+    }
   };
 
   window.addEventListener("pointermove", (e) => {
-    syncHoverState(e.clientX, e.clientY);
+    syncCharCursor(e.clientX, e.clientY);
 
     if (!state.dragArmed && !state.dragging) return;
 
     const now = performance.now();
-    const dt = Math.max((now - state.lastMoveAt) / 1000, 1 / 240);
+    const dt = Math.max((now - state.lastMoveAt) / 1000, 1 / 120);
 
     const dx = e.clientX - state.prevMouse.x;
     const dy = e.clientY - state.prevMouse.y;
@@ -116,6 +119,7 @@ export function initInput(state) {
       e.clientX - state.dragStart.x,
       e.clientY - state.dragStart.y
     );
+
     state.dragForce = clamp(
       pullDistance / Math.max(window.innerHeight * 0.35, 180),
       0,
@@ -126,12 +130,14 @@ export function initInput(state) {
   window.addEventListener("pointerleave", () => {
     state.hoverCharacter = false;
     window.__characterHover = false;
+    window.__characterDragging = false;
     char.classList.remove("hit");
   });
 
   document.addEventListener("mouseleave", () => {
     state.hoverCharacter = false;
     window.__characterHover = false;
+    window.__characterDragging = false;
     char.classList.remove("hit");
   });
 
@@ -157,6 +163,8 @@ export function initInput(state) {
     state.pointerSpeed = 0;
     state.dragForce = 0;
     state.lastMoveAt = performance.now();
+
+    syncCharCursor(e.clientX, e.clientY);
 
     char.setPointerCapture?.(e.pointerId);
   });
