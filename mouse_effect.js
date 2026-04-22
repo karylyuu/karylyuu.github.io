@@ -78,7 +78,7 @@ class MouseEffect {
 					: e.clientY
 
 				this.onHoverTarget =
-					e.target.matches(hoverTarget) && !event.startsWith('touch')
+					!!e.target.closest?.(hoverTarget) && !event.startsWith('touch')
 
 				this.updated = false
 			})
@@ -109,6 +109,8 @@ class MouseEffect {
 
 		this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
+		const hideCursor = window.__characterHover || window.__characterDragging
+
 		if (
 			(this.mouseX != this.pmouseX || this.mouseY != this.pmouseY) &&
 			this.hover < 0.2
@@ -132,7 +134,7 @@ class MouseEffect {
 			1
 		)
 
-		if (!this.isTouchDevice) {
+		if (!this.isTouchDevice && !hideCursor) {
 			this.c.beginPath()
 			this.c.arc(this.mouseX, this.mouseY, 8 + this.hover * 10, 0, 6.28318)
 			this.c.stroke()
@@ -142,7 +144,7 @@ class MouseEffect {
 		let dy = this.mouseY - this.pmouseY
 		let dist = Math.sqrt(dx * dx + dy * dy)
 
-		if (dist > 1) {
+		if (!hideCursor && dist > 1) {
 			let speed = Math.min(dist / 10, 2)
 
 			this.c.globalAlpha = 0.3 + speed * 0.3
