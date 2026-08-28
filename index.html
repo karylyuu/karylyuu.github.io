@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>karylyuu-dev</title>
+	<meta name="description" content="Illustrator / Developer">
+	<meta name="theme-color" content="black">
+	<meta property="og:title" content="karylyuu-dev">
+	<meta property="og:description" content="Illustrator / Developer">
+	<link rel="stylesheet" type="text/css" href="index.css">
+	<link rel="icon" type="image/png" href="favicon.png">
+	
+</head>
+<body>
+	<div id="menu-toggle" onclick="this.classList.toggle('toggled')"></div>
+	<nav></nav>
+	<div id="contents">
+		<section id="about">
+			<div class="container">
+				<div id="profile-info">
+					<h1>karylyuu</h1>
+					<div style="font: 700 18px Malgun Gothic;">⌲ So what do you wanna do</div>
+					<div class="quick-info">
+						<div class="qi-title">── ✦ Quick Info ──</div>
+						<p>This channel documents the process in which undefined concepts are refined into structured, operable systems</p>
+						<div class="qi-section">▼ Process</div>
+						<p>開発：Web / Software development and implementation<br>記録：Development logs · problem solving · refinement</p>
+						<div class="qi-section">▼ Scope</div>
+						<p>System design, implementation, and optimization across software projects</p>
+						<div class="qi-section">▼ Update</div>
+						<p>Weekly updates (subject to change)</p>
+						<div class="qi-section">▼ Tags</div>
+						<p>#SoftwareEngineer #CreativeTechnologist #Multimedia</p>
+					</div>
+				</div>
+			</div>
+			<div class="arrow"></div>
+		</section>
+		<section id="links"></section>
+		<section id="works"></section>
+		<section id="projects"></section>
+		<section id="creations"></section>
+		<section id="illustrations"></section>
+		<footer>
+			<div style="margin: 16px;">This page is made by karylyuu-dev</div>
+			<div style="margin: 16px">©2026</div>
+		</footer>
+	</div>
+	<template id="title"><div class="title"></div></template>
+	<template id="project"><div class="project"><img draggable="false"><h3></h3><p></p><a target="_blank"></a></div></template>
+	<template id="media"><div class="media"><img><video autoplay loop muted playsinline disablepictureinpicture></video><div class="media-info"><div class="media-name"></div><div class="media-date"></div></div></div></template>
+	
+	
+	<div id="char-system">
+		<div id="pivot">
+			<div id="rod"></div>
+			<img id="char" src="character.png" draggable="false">
+		</div>
+	</div>
+	
+<script src="app.min.js"></script>
+<script src="character.min.js"></script>
+</body>
+</html>
